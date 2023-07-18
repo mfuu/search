@@ -5,7 +5,7 @@
     "placeholder": "百度一下",
     "jsonp":"cb",
     "search": "https://www.baidu.com/s?wd=",
-    "suggest": "http://suggestion.baidu.com/su?wd=#content#&cb=window.baidu.sug",
+    "suggest": "https://suggestion.baidu.com/su?wd=#content#&cb=window.baidu.sug",
     "defaultShow": false
   },
   "google": {
@@ -14,7 +14,7 @@
     "placeholder": "在 Google 中搜索",
     "jsonp":"jsonp",
     "search": "https://www.google.com.hk/search?hl=zh-CN&q=",
-    "suggest": "http://suggestqueries.google.com/complete/search?client=youtube&q=#content#&jsonp=window.google.ac.h",
+    "suggest": "https://suggestqueries.google.com/complete/search?client=youtube&q=#content#&jsonp=window.google.ac.h",
     "defaultShow": true
   },
   "bing": {
@@ -23,7 +23,7 @@
     "placeholder": "",
     "jsonp":"cb",
     "search": "https://www.google.com.hk/search?hl=zh-CN&q=",
-    "suggest": "http://api.bing.com/qsonhs.aspx?type=cb&q=#content#&cb=window.bing.sug",
+    "suggest": "https://api.bing.com/qsonhs.aspx?type=cb&q=#content#&cb=window.bing.sug",
     "defaultShow": false
   },
   "so": {
