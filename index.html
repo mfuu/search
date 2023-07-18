@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>Search</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="full-screen" content="yes">
+  <meta name="browsermode" content="application">
+  <meta name="x5-fullscreen" content="true">
+  <meta name="x5-page-mode" content="app">
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap@4/dist/css/bootstrap.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free/css/all.min.css" type="text/css" media="all">
+  <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/js/search.js"></script>
+  <link rel="stylesheet" href="./assets/css/search.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="search">
+      <nav>
+        <div class="nav nav-tabs" id="search-tab" role="tablist"></div>
+      </nav>
+      <div class="tab-content" id="search-tabContent">
+        <div class="tab-pane fade" id="nav-baidu" role="tabpanel" aria-labelledby="nav-baidu-tab">
+          <div id="logo">
+            <img src="./assets/img/baidu_logo.png" width="270" height="129">
+          </div>
+          <div class="search-box">
+            <span class="search-input">
+              <input type="text" style="outline:0" autocomplete="off">
+            </span>
+            <span class="submit-wrap">
+              <input type="submit" id="su" value="百度一下">
+            </span>
+            <ul id="search-suggest" class="baidu"></ul>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-google" role="tabpanel" aria-labelledby="nav-google-tab">
+          <div id="logo"></div>
+          <div class="search-box">
+            <input type="text" style="outline:0" autocomplete="off">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <ul id="search-suggest" class="google"></ul>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-bing" role="tabpanel" aria-labelledby="nav-bing-tab">
+          <input type="text" style="outline:0" autocomplete="off">
+        </div>
+        <div class="tab-pane fade" id="nav-so" role="tabpanel" aria-labelledby="nav-so-tab">
+          <input type="text" style="outline:0" autocomplete="off">
+        </div>
+        <div class="tab-pane fade" id="nav-sogou" role="tabpanel" aria-labelledby="nav-sogou-tab">
+          <input type="text" style="outline:0" autocomplete="off">
+        </div>
+        <div class="tab-pane fade" id="nav-taobao" role="tabpanel" aria-labelledby="nav-taobao-tab">
+          <input type="text" style="outline:0" autocomplete="off">
+        </div>
+      </div>
+      <script>
+        $(function () {
+          $.getJSON("config.json", function (data) {
+            let tab = $('#search-tab');
+            $.each(data, (i, o) => {
+              tab.append(
+                `<button
+                  class="nav-link ${o.defaultShow ? "active" : ""}"
+                  id="nav-${o.key}-tab"
+                  data-toggle="tab"
+                  data-target="#nav-${o.key}"
+                  type="button"
+                  role="tab"
+                  aria-controls="nav-${o.key}"
+                  aria-selected="true"
+                >${o.title}</button>`
+              );
+              if (o.defaultShow) {
+                $(`#nav-${o.key}`).addClass('show active');
+              }
+              let input = $(`#nav-${o.key}`).find('input');
+              input.attr('placeholder', o.placeholder);
+              input.attr('data-search', o.search);
+              input.attr('data-suggest', o.suggest);
+              input.attr('data-jsonp', o.jsonp);
+              input.attr('id', 'searchInput');
+              input.keyup(onInputChange);
+            })
+          })
+        })
+      </script>
+    </div>
+  </div>
+  <script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+
+</html>
