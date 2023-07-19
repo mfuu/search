@@ -1,3 +1,7 @@
+html,body {
+  width: 100%;
+  height: 100%;
+}
 p, form, ol, ul, li, dl, dt, dd, h3 {
   list-style: none;
 }
@@ -27,7 +31,7 @@ input {
 }
 /* google */
 #nav-google input {
-  padding-inline-end: 88px;
+  padding-inline-end: 52px;
   padding-inline-start: 52px;
 }
 #nav-google .search-box {
@@ -186,4 +190,27 @@ input {
 #search-suggest.baidu li:first-child {
   padding-top: 8px;
   border-top: 2px solid #f5f5f6;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  /* google */
+  #nav-google .search-box {
+    display: flex;
+    width: auto;
+  }
+  /* baidu */
+  #nav-baidu .search-box {
+    display: flex;
+    width: auto;
+  }
+  #nav-baidu .search-input {
+    flex: 1;
+  }
+  #nav-baidu .search-input input {
+    width: calc(100% - 32px);
+  }
+  #search-suggest.baidu {
+    width: calc(100% - 106px);
+  }
 }
