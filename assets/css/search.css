@@ -167,16 +167,16 @@ input {
   width: 550px;
   top: 35px;
   border-radius: 0 0 10px 10px;
-  border: 2px solid #4e71f2!important;
-  border-top: 0!important;
+  border: 2px solid #4e71f2;
+  border-top: 0;
   padding: 8px 0 7px;
   background: #fff;
-  border-top: 2px solid #f5f5f6;
   z-index: 101;
 }
 #search-suggest.baidu li {
+  position: relative;
   width: auto;
-  padding-left: 14px;
+  padding-left: 8px;
   color: #626675;
   line-height: 28px;
   background: 0 0;
@@ -191,13 +191,83 @@ input {
   padding-top: 8px;
   border-top: 2px solid #f5f5f6;
 }
-
+/* bing */
+#nav-bing input {
+  background-color: transparent;
+  padding: 12px 10px 12px 20px;
+  border: 0;
+  flex: 1;
+  outline: none;
+  font-size: 1.125rem;
+  font: inherit;
+  min-width: 300px;
+  color: #000;
+}
+#nav-bing #logo {
+  width: 154px;
+  height: 24px;
+  transform: translate(0,12px) scale(1.66);
+  background-image: url(../img/bing_logo.svg);
+  margin: 0 auto;
+  margin-bottom: 38px;
+}
+#nav-bing .search-box {
+  width: 100%;
+  max-width: 596px;
+  background-color: transparent;
+  font: normal 1rem "Segoe UI",Arial,Helvetica,Sans-Serif;
+  padding-right: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.3);
+  align-items: center;
+  justify-content: flex-end;
+  display: flex;
+  border-radius: 24px;
+  position: relative;
+  background-color: #fff;
+  margin: 0 auto;
+}
+#nav-bing.sug-show .search-box {
+  border-radius: 24px 24px 0 0;
+}
+#nav-bing .search-icon {
+  width: 24px;
+}
+#search-suggest.bing {
+  top: 100%;
+  padding-left: 0px;
+  border-radius: 0px 0px 24px 24px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.18) 0px 2px 4px 1px;
+  overflow: hidden;
+  background-color: rgb(255, 255, 255);
+  z-index: 1111;
+}
+#search-suggest.bing li {
+  display: flex;
+  cursor: pointer;
+}
+#search-suggest.bing li:hover {
+  background-color: #ececec;
+}
+#search-suggest.bing .suggest-icon {
+  margin-left: 8px;
+  margin-right: 7px;
+  height: 32px;
+  width: 32px;
+  line-height: 32px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
 /* mobile */
 @media (max-width: 768px) {
   /* google */
   #nav-google .search-box {
     display: flex;
     width: auto;
+  }
+  #search-suggest.google li .suggest-icon {
+    height: 28px;
+    line-height: 28px;
   }
   /* baidu */
   #nav-baidu .search-box {
@@ -211,6 +281,30 @@ input {
     width: calc(100% - 32px);
   }
   #search-suggest.baidu {
-    width: calc(100% - 106px);
+    width: 100%;
+    top: 44px;
+    z-index: 99;
+    border-color: transparent;
+  }
+  #search-suggest.baidu li {
+    padding-left: 16px;
+  }
+  #search-suggest.baidu li::before {
+    content: "\f002";
+    position: absolute;
+    left: 0px;
+    top: 5px;
+    font-family: "Font Awesome 6 Free";
+    -webkit-font-smoothing: antialiased;
+    display: var(--fa-display,inline-block);
+    font-style: normal;
+    font-variant: normal;
+    line-height: 1;
+    text-rendering: auto;
+    font-weight: 900;
+  }
+  #search-suggest.baidu li:first-child {
+    padding-top: 0;
+    border-top: none;
   }
 }

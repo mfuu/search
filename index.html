@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Search</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-touch-fullscreen" content="yes">
@@ -21,7 +21,7 @@
 
 <body>
   <div class="container">
-    <div class="search">
+    <section class="search">
       <nav>
         <div class="nav nav-tabs" id="search-tab" role="tablist"></div>
       </nav>
@@ -31,34 +31,30 @@
             <img src="./assets/img/baidu_logo.png" width="270" height="129">
           </div>
           <div class="search-box">
-            <span class="search-input">
-              <input type="text" style="outline:0" autocomplete="off">
-            </span>
-            <span class="submit-wrap">
-              <input type="submit" id="su" value="百度一下">
-            </span>
+            <div class="search-input">
+              <input id="searchInput" type="text" style="outline:0" autocomplete="off">
+            </div>
+            <div class="submit-wrap">
+              <input id="submitInput" type="submit" value="百度一下">
+            </div>
             <ul id="search-suggest" class="baidu"></ul>
           </div>
         </div>
         <div class="tab-pane fade" id="nav-google" role="tabpanel" aria-labelledby="nav-google-tab">
           <div id="logo"></div>
           <div class="search-box">
-            <input type="text" style="outline:0" autocomplete="off">
+            <input id="searchInput" type="text" style="outline:0" autocomplete="off">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
             <ul id="search-suggest" class="google"></ul>
           </div>
         </div>
         <div class="tab-pane fade" id="nav-bing" role="tabpanel" aria-labelledby="nav-bing-tab">
-          <input type="text" style="outline:0" autocomplete="off">
-        </div>
-        <div class="tab-pane fade" id="nav-so" role="tabpanel" aria-labelledby="nav-so-tab">
-          <input type="text" style="outline:0" autocomplete="off">
-        </div>
-        <div class="tab-pane fade" id="nav-sogou" role="tabpanel" aria-labelledby="nav-sogou-tab">
-          <input type="text" style="outline:0" autocomplete="off">
-        </div>
-        <div class="tab-pane fade" id="nav-taobao" role="tabpanel" aria-labelledby="nav-taobao-tab">
-          <input type="text" style="outline:0" autocomplete="off">
+          <div id="logo"></div>
+          <div class="search-box">
+            <input id="searchInput" type="text" style="outline:0" autocomplete="off">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <ul id="search-suggest" class="bing"></ul>
+          </div>
         </div>
       </div>
       <script>
@@ -81,18 +77,19 @@
               if (o.defaultShow) {
                 $(`#nav-${o.key}`).addClass('show active');
               }
-              let input = $(`#nav-${o.key}`).find('input');
+              let input = $(`#nav-${o.key}`).find('#searchInput');
               input.attr('placeholder', o.placeholder);
               input.attr('data-search', o.search);
               input.attr('data-suggest', o.suggest);
               input.attr('data-jsonp', o.jsonp);
+              input.attr('data-callback', o.callback);
               input.attr('id', 'searchInput');
               input.keyup(onInputChange);
             })
           })
         })
       </script>
-    </div>
+    </section>
   </div>
   <script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 </body>

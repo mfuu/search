@@ -1,9 +1,20 @@
 {
+  "bing": {
+    "key": "bing",
+    "title": "必应",
+    "placeholder": "输入搜索词",
+    "jsonp": "window.bing.sug",
+    "callback": "window.bing.sug",
+    "search": "https://cn.bing.com/search?q=",
+    "suggest": "https://api.bing.com/qsonhs.aspx?type=cb&q=#content#&cb=window.bing.sug",
+    "defaultShow": true
+  },
   "baidu": {
     "key": "baidu",
     "title": "百度",
     "placeholder": "百度一下",
-    "jsonp":"cb",
+    "jsonp": "cb",
+    "callback": "window.baidu.sug",
     "search": "https://www.baidu.com/s?wd=",
     "suggest": "https://suggestion.baidu.com/su?wd=#content#&cb=window.baidu.sug",
     "defaultShow": false
@@ -12,45 +23,10 @@
     "key": "google",
     "title": "Google",
     "placeholder": "在 Google 中搜索",
-    "jsonp":"jsonp",
+    "jsonp": "jsonp",
+    "callback": "window.google.ac.h",
     "search": "https://www.google.com.hk/search?hl=zh-CN&q=",
     "suggest": "https://suggestqueries.google.com/complete/search?client=youtube&q=#content#&jsonp=window.google.ac.h",
-    "defaultShow": true
-  },
-  "bing": {
-    "key": "bing",
-    "title": "必应",
-    "placeholder": "",
-    "jsonp":"cb",
-    "search": "https://www.google.com.hk/search?hl=zh-CN&q=",
-    "suggest": "https://api.bing.com/qsonhs.aspx?type=cb&q=#content#&cb=window.bing.sug",
-    "defaultShow": false
-  },
-  "so": {
-    "key": "so",
-    "title": "好搜",
-    "placeholder": "",
-    "jsonp":"callback",
-    "search": "https://www.google.com.hk/search?hl=zh-CN&q=",
-    "suggest": "https://sug.so.360.cn/suggest?encodein=utf-8&encodeout=utf-8&format=json&word=#content#&callback=window.so.sug",
-    "defaultShow": false
-  },
-  "sogou": {
-    "key": "sogou",
-    "title": "搜狗",
-    "placeholder": "",
-    "jsonp":"callback",
-    "search": "https://www.google.com.hk/search?hl=zh-CN&q=",
-    "suggest": "https://www.sogou.com/suggnew/ajajjson?type=web&key=#content#",
-    "defaultShow": false
-  },
-  "taobao": {
-    "key": "taobao",
-    "title": "淘宝搜索",
-    "placeholder": "",
-    "jsonp":"callback",
-    "search": "https://www.google.com.hk/search?hl=zh-CN&q=",
-    "suggest": "https://suggest.taobao.com/sug?code=utf-8&q=#content#&callback=window.taobao.sug",
     "defaultShow": false
   }
 }
