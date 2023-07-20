@@ -9,8 +9,7 @@ window.baidu = {
           <div id="logo" class="baidu-logo">
         </li>`;
     });
-    const txt = getInputDom().val();
-    handleSuggestWords(suggests, txt);
+    handleSuggestWords(suggests, data.q);
   },
 };
 window.google = {
@@ -25,14 +24,14 @@ window.google = {
             <div id="logo" class="google-logo">
           </li>`;
       });
-      const txt = getInputDom().val();
-      handleSuggestWords(suggests, txt);
+      handleSuggestWords(suggests, data[0]);
     },
   },
 };
 window.bing = {
   sug(data) {
-    const list = data.AS.Results.reduce((res, item) => {
+    const { Results = [], Query = "" } = data.AS;
+    const list = Results.reduce((res, item) => {
       res.push(...item.Suggests.map((el) => el.Txt));
       return res;
     }, []);
@@ -44,8 +43,7 @@ window.bing = {
           <div id="logo" class="bing-logo">
         </li>`;
     });
-    const txt = getInputDom().val();
-    handleSuggestWords(suggests, txt);
+    handleSuggestWords(suggests, Query);
   },
 };
 
@@ -171,6 +169,8 @@ $(function () {
       if (suggest.children().length) {
         toggleSearchClass(true);
       }
+    } else if ($(e.target).closest("#searchIcon").length) {
+      onSearch();
     } else if ($(e.target).parents("#dropdownEngine").length) {
       handleDropdownClick(e);
     } else {

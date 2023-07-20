@@ -117,7 +117,7 @@ footer {
   background-color: #fff;
   margin: 0 auto;
   margin-top: 56px;
-  transition: 1s all;
+  transition: 0.5s all;
 }
 .integrating-search.sug-show .search-box {
   border-radius: 24px 24px 0 0;
@@ -126,6 +126,7 @@ footer {
   width: 24px;
   height: 24px;
   min-width: 24px;
+  cursor: pointer;
 }
 .search-suggestions {
   position: absolute;
@@ -135,7 +136,7 @@ footer {
   z-index: 99;
   max-height: 0px;
   opacity: 0;
-  transition: 1s all;
+  transition: 0.5s all;
 }
 .sug-show .search-suggestions {
   max-height: 480px;
