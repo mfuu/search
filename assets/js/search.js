@@ -73,13 +73,15 @@ function handleSuggestWords(suggests = [], txt = "") {
     suggest.empty();
     suggest.attr("data-search", txt);
   }
-
   toggleSearchClass(true);
   if (!suggests.length) {
     suggest.empty();
     toggleSearchClass(false);
   }
-  suggests.forEach((item) => suggest.append(item));
+  const inputText = getInputDom().val();
+  if (inputText.trim()) {
+    suggests.forEach((item) => suggest.append(item));
+  }
 }
 
 function handleDropdownClick(e) {
@@ -152,10 +154,11 @@ $(function () {
   });
   $(document).on("click", function (e) {
     if ($(e.target).parents("#searchSuggest").length) {
-      const word = $(this).find("#innerText").text();
-      const key = $(this).attr("data-key");
+      const li = $(e.target).closest("li");
+      const txt = li.find("#innerText").text();
+      const key = li.attr("data-key");
       const input = getInputDom();
-      input.val(word);
+      input.val(txt);
       let search = "";
       $.each(window.searchConfig, (i, o) => {
         if (o.key === key) {

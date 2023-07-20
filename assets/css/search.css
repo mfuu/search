@@ -5,6 +5,10 @@ html,body {
 p, form, ol, ul, li, dl, dt, dd, h3 {
   list-style: none;
 }
+ul {
+  margin: 0;
+  padding: 0;
+}
 input {
   background-color: #ffffffff;
   border: none;
@@ -127,20 +131,22 @@ footer {
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
+  top: 100%;
   z-index: 99;
   max-height: 0px;
+  opacity: 0;
   transition: 1s all;
 }
 .sug-show .search-suggestions {
   max-height: 480px;
+  opacity: 1;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.18) 0px 2px 4px 1px;
 }
 .search-suggestions {
-  top: 100%;
   padding-left: 0px;
   border-radius: 0px 0px 24px 24px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: rgb(255, 255, 255);
 }
 .search-suggestions li {
@@ -173,7 +179,8 @@ footer {
   text-overflow: ellipsis;
 }
 @media (max-width: 768px) {
-  .search-suggestions {
+  .sug-show .search-suggestions {
     max-height: 299px;
+    opacity: 1;
   }
 }
