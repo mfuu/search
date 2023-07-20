@@ -7,7 +7,7 @@
     "callback": "window.bing.sug",
     "search": "https://cn.bing.com/search?q=",
     "suggest": "https://api.bing.com/qsonhs.aspx?type=cb&q=#content#&cb=window.bing.sug",
-    "defaultShow": true
+    "default": true
   },
   "baidu": {
     "key": "baidu",
@@ -16,8 +16,7 @@
     "jsonp": "cb",
     "callback": "window.baidu.sug",
     "search": "https://www.baidu.com/s?wd=",
-    "suggest": "https://suggestion.baidu.com/su?wd=#content#&cb=window.baidu.sug",
-    "defaultShow": false
+    "suggest": "https://suggestion.baidu.com/su?wd=#content#&cb=window.baidu.sug"
   },
   "google": {
     "key": "google",
@@ -26,7 +25,6 @@
     "jsonp": "jsonp",
     "callback": "window.google.ac.h",
     "search": "https://www.google.com.hk/search?hl=zh-CN&q=",
-    "suggest": "https://suggestqueries.google.com/complete/search?client=youtube&q=#content#&jsonp=window.google.ac.h",
-    "defaultShow": false
+    "suggest": "https://suggestqueries.google.com/complete/search?client=youtube&q=#content#&jsonp=window.google.ac.h"
   }
 }

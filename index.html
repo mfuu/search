@@ -1,97 +1,59 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Search</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="full-screen" content="yes" />
+    <meta name="browsermode" content="application" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="x5-page-mode" content="app" />
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@4/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./assets/css/search.css" />
+    <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
+    <script src="./assets/js/search.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Search</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-touch-fullscreen" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="full-screen" content="yes">
-  <meta name="browsermode" content="application">
-  <meta name="x5-fullscreen" content="true">
-  <meta name="x5-page-mode" content="app">
-  <link rel="stylesheet" href="https://unpkg.com/bootstrap@4/dist/css/bootstrap.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free/css/all.min.css" type="text/css" media="all">
-  <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
-  <script src="./assets/js/search.js"></script>
-  <link rel="stylesheet" href="./assets/css/search.css">
-</head>
-
-<body>
-  <div class="container">
-    <section class="search">
-      <nav>
-        <div class="nav nav-tabs" id="search-tab" role="tablist"></div>
-      </nav>
-      <div class="tab-content" id="search-tabContent">
-        <div class="tab-pane fade" id="nav-baidu" role="tabpanel" aria-labelledby="nav-baidu-tab">
-          <div id="logo">
-            <img src="./assets/img/baidu_logo.png" width="270" height="129">
+  <body>
+    <div class="container">
+      <section class="integrating-search">
+        <div class="search-box">
+          <div id="searchEngine" class="dropdown">
+            <i id="currentEngine" data-toggle="dropdown" aria-expanded="false"></i>
+            <div id="dropdownEngine" class="dropdown-menu"></div>
           </div>
-          <div class="search-box">
-            <div class="search-input">
-              <input id="searchInput" type="text" style="outline:0" autocomplete="off">
-            </div>
-            <div class="submit-wrap">
-              <input id="submitInput" type="submit" value="百度一下">
-            </div>
-            <ul id="search-suggest" class="baidu"></ul>
-          </div>
+          <input id="searchInput" type="text" style="outline: 0" autocomplete="off" />
+          <i id="searchIcon" class="search-icon"></i>
+          <ul id="searchSuggest" class="search-suggestions"></ul>
         </div>
-        <div class="tab-pane fade" id="nav-google" role="tabpanel" aria-labelledby="nav-google-tab">
-          <div id="logo"></div>
-          <div class="search-box">
-            <input id="searchInput" type="text" style="outline:0" autocomplete="off">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <ul id="search-suggest" class="google"></ul>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="nav-bing" role="tabpanel" aria-labelledby="nav-bing-tab">
-          <div id="logo"></div>
-          <div class="search-box">
-            <input id="searchInput" type="text" style="outline:0" autocomplete="off">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <ul id="search-suggest" class="bing"></ul>
-          </div>
-        </div>
-      </div>
-      <script>
-        $(function () {
-          $.getJSON("config.json", function (data) {
-            let tab = $('#search-tab');
-            $.each(data, (i, o) => {
-              tab.append(
-                `<button
-                  class="nav-link ${o.defaultShow ? "active" : ""}"
-                  id="nav-${o.key}-tab"
-                  data-toggle="tab"
-                  data-target="#nav-${o.key}"
-                  type="button"
-                  role="tab"
-                  aria-controls="nav-${o.key}"
-                  aria-selected="true"
-                >${o.title}</button>`
-              );
-              if (o.defaultShow) {
-                $(`#nav-${o.key}`).addClass('show active');
-              }
-              let input = $(`#nav-${o.key}`).find('#searchInput');
-              input.attr('placeholder', o.placeholder);
-              input.attr('data-search', o.search);
-              input.attr('data-suggest', o.suggest);
-              input.attr('data-jsonp', o.jsonp);
-              input.attr('data-callback', o.callback);
-              input.attr('id', 'searchInput');
-              input.keyup(onInputChange);
-            })
-          })
-        })
-      </script>
-    </section>
-  </div>
-  <script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-</body>
-
+        <script>
+          $(function () {
+            const input = $(`.integrating-search`).find("#searchInput");
+            input.keyup(onInputChange);
+            $.getJSON("config.json", function (data) {
+              window.searchConfig = data;
+              const engine = getEngineDom();
+              const dropdown = engine.find("#dropdownEngine");
+              const current = engine.find("#currentEngine");
+              $.each(data, (i, o) => {
+                dropdown.append(
+                  `<a class="dropdown-item ${o.key}" href="#" data-key="${o.key}" data-search="${o.search}" data-placeholder="${o.placeholder}">${o.title}</a>`
+                );
+              });
+              $.each(data, (i, o) => {
+                if (o.default) {
+                  const item = engine.find(`.${o.key}`);
+                  handleDropdownClick({ target: item[0] });
+                }
+              });
+            });
+          });
+        </script>
+      </section>
+    </div>
+    <script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>
