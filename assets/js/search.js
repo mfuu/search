@@ -118,7 +118,8 @@ function onInputChange() {
       jsonpCallback: o.callback,
       error: function (e) {
         if (e.status !== 200) {
-          handleSuggestWords([]);
+          const txt = getInputDom().val();
+          handleSuggestWords([], txt);
         }
       },
     });
