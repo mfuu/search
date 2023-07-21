@@ -5,22 +5,12 @@ html,body {
 p, form, ol, ul, li, dl, dt, dd, h3 {
   list-style: none;
 }
+a {
+  cursor: pointer;
+}
 ul {
   margin: 0;
   padding: 0;
-}
-input {
-  background-color: #ffffffff;
-  border: none;
-  border-radius: 22px;
-  color: #000000ff;
-  font-family: inherit;
-  font-size: inherit;
-  height: 100%;
-  outline: 0;
-  position: relative;
-  width: 100%;
-  z-index: 100;
 }
 ::-webkit-scrollbar {
   width: 14px;
@@ -37,8 +27,7 @@ input {
 header {
   display: flex;
   justify-content: space-between;
-  padding-left: 15px;
-  padding-right: 20px;
+  padding: 8px 15px;
 }
 footer {
   position: fixed;
@@ -47,13 +36,30 @@ footer {
   bottom: 0;
   text-align: center;
 }
+.flow {
+  background-image: url(../img/wave.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 350px;
+}
+.copyright {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 #he-plugin-simple {
   z-index: 999;
 }
+.contact, .drawer-icon {
+  padding: 8px;
+}
 .drawer-icon {
-  font-size: 25px;
-  font-weight: 500;
-  cursor: pointer;
+  display: flex;
+  border-radius: 50%;
+}
+.drawer-icon:hover {
+  background-color: rgba(60,64,67,.08);
 }
 .dropdown-menu {
   min-width: 6rem;
@@ -77,37 +83,40 @@ footer {
   background-repeat: no-repeat;
   background-size: cover;
 }
-.integrating-search {
+.integrated-search {
   height: 180px;
   margin: auto;
-  margin-left: 12px;
-  margin-right: 12px;
   padding-top: 56px;
+  transition: 0.5s all;
 }
-.integrating-search #currentEngine {
+.integrated-search #currentEngine {
   display: block;
   width: 20px;
   height: 20px;
   cursor: pointer;
   transition: 1s all;
 }
-.integrating-search input {
+.integrated-search input {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
   background-color: transparent;
   padding: 12px 10px 12px 12px;
   border: 0;
   flex: 1;
   outline: none;
-  font-size: 1.125rem;
   font: inherit;
   color: #000;
 }
-.integrating-search .search-box {
+.integrated-search .logo {
+  height: 56px;
+}
+.integrated-search .search-box {
   width: 100%;
   max-width: 596px;
   background-color: transparent;
   font: normal 1rem "Segoe UI",Arial,Helvetica,Sans-Serif;
-  padding-right: 15px;
-  padding-left: 15px;
   box-shadow: 0 2px 4px rgba(0,0,0,.3);
   align-items: center;
   justify-content: flex-end;
@@ -116,13 +125,16 @@ footer {
   position: relative;
   background-color: #fff;
   margin: 0 auto;
-  margin-top: 56px;
   transition: 0.5s all;
 }
-.integrating-search.sug-show .search-box {
+.integrated-search .search-box:hover {
+  box-shadow: 0 2px 8px 1px rgba(64,60,67,.24);
+  border-color: rgba(223,225,229,0);
+}
+.integrated-search.sug-show .search-box {
   border-radius: 24px 24px 0 0;
 }
-.integrating-search .search-icon {
+.integrated-search .search-icon {
   width: 24px;
   height: 24px;
   min-width: 24px;
@@ -180,8 +192,11 @@ footer {
   text-overflow: ellipsis;
 }
 @media (max-width: 768px) {
+  .integrated-search {
+    padding-top: 0;
+  }
   .sug-show .search-suggestions {
-    max-height: 299px;
+    max-height: 288px;
     opacity: 1;
   }
 }

@@ -9,7 +9,7 @@ window.baidu = {
           <div id="logo" class="baidu-logo">
         </li>`;
     });
-    handleSuggestWords(suggests, data.q);
+    handleSuggestWords(suggests, 'baidu');
   },
 };
 window.google = {
@@ -24,13 +24,13 @@ window.google = {
             <div id="logo" class="google-logo">
           </li>`;
       });
-      handleSuggestWords(suggests, data[0]);
+      handleSuggestWords(suggests, 'google');
     },
   },
 };
 window.bing = {
   sug(data) {
-    const { Results = [], Query = "" } = data.AS;
+    const { Results = [] } = data.AS;
     const list = Results.reduce((res, item) => {
       res.push(...item.Suggests.map((el) => el.Txt));
       return res;
@@ -43,62 +43,57 @@ window.bing = {
           <div id="logo" class="bing-logo">
         </li>`;
     });
-    handleSuggestWords(suggests, Query);
+    handleSuggestWords(suggests, 'bing');
   },
 };
 
 function getEngineDom() {
-  return $(".integrating-search").find("#searchEngine");
+  return $(".integrated-search").find("#searchEngine");
 }
 
 function getSuggestDom() {
-  return $(".integrating-search").find("#searchSuggest");
+  return $(".integrated-search").find("#searchSuggest");
 }
 
 function getInputDom() {
-  return $(".integrating-search").find("#searchInput");
+  return $(".integrated-search").find("#searchInput");
 }
 
 function toggleSearchClass(bool) {
-  let wrap = $(".integrating-search");
+  let wrap = $(".integrated-search");
   wrap[bool ? "addClass" : "removeClass"]("sug-show");
 }
 
-function handleSuggestWords(suggests = [], txt = "") {
-  const suggest = getSuggestDom();
-  const lastTxt = suggest.attr("data-search");
-  if (lastTxt !== txt) {
-    suggest.empty();
-    suggest.attr("data-search", txt);
-  }
-  toggleSearchClass(true);
-  if (!suggests.length) {
-    suggest.empty();
-    toggleSearchClass(false);
-  }
+function handleSuggestWords(suggests = [], dataKey = "") {
+  const suggestDom = getSuggestDom();
+  suggestDom.children(`li[data-key="${dataKey}"]`).remove();
   const inputText = getInputDom().val();
   if (inputText.trim()) {
-    suggests.forEach((item) => suggest.append(item));
+    suggests.forEach((item) => suggestDom.append(item));
+  }
+  if (suggestDom.children().length) {
+    toggleSearchClass(true);
+  } else {
+    toggleSearchClass(false);
   }
 }
 
 function handleDropdownClick(e) {
-  const input = getInputDom();
-  const current = $(".integrating-search").find("#currentEngine");
-  const key = $(e.target).attr("data-key");
-  const search = $(e.target).attr("data-search");
+  const inputDom = getInputDom();
+  const currentEngine = getEngineDom().find("#currentEngine");
+  const engineKey = $(e.target).attr("data-key");
+  const searchUrl = $(e.target).attr("data-search");
   const placeholder = $(e.target).attr("data-placeholder");
-  input.attr("data-search", search);
-  input.attr("placeholder", placeholder);
-  current.attr("data-key", key);
-  current.removeClass();
-  current.addClass(`${key}-logo`);
+  inputDom.attr("data-search", searchUrl);
+  inputDom.attr("placeholder", placeholder);
+  currentEngine.attr("data-key", engineKey);
+  currentEngine.removeClass();
+  currentEngine.addClass(`${engineKey}-logo`);
 
-  const engine = getEngineDom();
-  const dropdown = engine.find(".dropdown-menu");
-  dropdown.children().each(function (i, o) {
+  const availableEngine = getEngineDom().find("#availableEngine");
+  availableEngine.children().each(function (i, o) {
     $(this).removeClass("active");
-    if ($(this).attr("data-key") === key) {
+    if ($(this).attr("data-key") === engineKey) {
       $(this).addClass("active");
     }
   });
@@ -106,8 +101,9 @@ function handleDropdownClick(e) {
 
 function onInputChange() {
   var keywords = $(this).val();
-  if (!keywords) {
-    handleSuggestWords([]);
+  if (!keywords.trim()) {
+    toggleSearchClass(false);
+    getSuggestDom().empty();
     return;
   }
   $.each(window.searchConfig, (i, o) => {
@@ -118,8 +114,7 @@ function onInputChange() {
       jsonpCallback: o.callback,
       error: function (e) {
         if (e.status !== 200) {
-          const txt = getInputDom().val();
-          handleSuggestWords([], txt);
+          handleSuggestWords([], o.key);
         }
       },
     });
@@ -127,23 +122,23 @@ function onInputChange() {
 }
 
 function onSearch(search = "") {
-  let input = getInputDom();
-  if (!input) {
+  let inputDom = getInputDom();
+  if (!inputDom) {
     console.error("The Input box with id `searchInput` is not found.");
     return;
   }
-  let word = input.val();
+  let word = inputDom.val();
   if (!word.trim()) {
     return;
   }
-  let link = (search || input.attr("data-search")) + word;
+  let link = (search || inputDom.attr("data-search")) + word;
   location.href = link;
 }
 
 $(function () {
   $(document).ready(function () {
-    const input = getInputDom();
-    input.focus();
+    const inputDom = getInputDom();
+    inputDom.focus();
   });
   $(document).keyup(function (event) {
     if (event.keyCode == 13) {
@@ -155,8 +150,8 @@ $(function () {
       const li = $(e.target).closest("li");
       const txt = li.find("#innerText").text();
       const key = li.attr("data-key");
-      const input = getInputDom();
-      input.val(txt);
+      const inputDom = getInputDom();
+      inputDom.val(txt);
       let search = "";
       $.each(window.searchConfig, (i, o) => {
         if (o.key === key) {
@@ -171,7 +166,7 @@ $(function () {
       }
     } else if ($(e.target).closest("#searchIcon").length) {
       onSearch();
-    } else if ($(e.target).parents("#dropdownEngine").length) {
+    } else if ($(e.target).parents("#availableEngine").length) {
       handleDropdownClick(e);
     } else {
       toggleSearchClass(false);
