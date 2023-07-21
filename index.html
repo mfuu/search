@@ -49,7 +49,7 @@
         <script>
           $(function () {
             const input = $(`.integrated-search`).find("#searchInput");
-            input.keyup(onInputChange);
+            input.bind('input porpertychange', onInputChange);
             $.getJSON("config.json", function (data) {
               window.searchConfig = data;
               const engine = getEngineDom();

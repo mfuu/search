@@ -37,7 +37,7 @@ footer {
   text-align: center;
 }
 .flow {
-  background-image: url(../img/wave.svg);
+  background-image: url(../img/background.svg);
   background-repeat: no-repeat;
   background-size: cover;
   height: 350px;
@@ -47,9 +47,6 @@ footer {
   left: 0;
   right: 0;
   bottom: 0;
-}
-#he-plugin-simple {
-  z-index: 999;
 }
 .contact, .drawer-icon {
   padding: 8px;
@@ -168,9 +165,10 @@ footer {
   align-items: center;
   line-height: 32px;
   cursor: pointer;
+  animation: moveIn ease-in-out 0.5s;
 }
 .search-suggestions li:hover {
-  background-color: #ececec;
+  background-color: #20212419;
 }
 .search-suggestions .suggest-icon {
   margin-left: 13px;
@@ -197,6 +195,16 @@ footer {
   }
   .sug-show .search-suggestions {
     max-height: 288px;
+    opacity: 1;
+  }
+}
+@keyframes moveIn {
+  from {
+    padding-right: 100%;
+    opacity: 0;
+  }
+  to {
+    padding-right: 0%;
     opacity: 1;
   }
 }
