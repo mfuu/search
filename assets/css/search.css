@@ -81,7 +81,6 @@ footer {
   background-size: cover;
 }
 .integrated-search {
-  height: 180px;
   margin: auto;
   padding-top: 56px;
   transition: 0.5s all;
@@ -189,13 +188,65 @@ footer {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+.custom-tags {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+}
+.custom-tags .add-custom {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 26px;
+  color: blue;
+  border-radius: 50%;
+  border: 1px dashed #aaa;
+  cursor: pointer;
+  margin: 8px;
+}
+.custom-tags .add-custom:hover {
+  color: #1984ff;
+}
+.custom-tags .tag {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  margin: 8px 15px;
+  border-radius: 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+  cursor: pointer;
+}
+.custom-tags .tag::after {
+  content: attr(data-title);
+  font-size: 12px;
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
 @media (max-width: 768px) {
+  .copyright {
+    opacity: 0;
+  }
   .integrated-search {
     padding-top: 0;
   }
   .sug-show .search-suggestions {
     max-height: 288px;
     opacity: 1;
+  }
+  .modal-header {
+    padding: 0.5rem 1rem;
+  }
+  .modal-body {
+    padding: 0.5rem 1rem;
+  }
+  .modal-footer {
+    padding: 0.5rem 1rem;
   }
 }
 @keyframes moveIn {

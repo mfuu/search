@@ -1,3 +1,5 @@
+const CUSTOM_TAG_KEY = "customTagLocalStoreKey";
+
 window.baidu = {
   sug(data) {
     const list = data.s || [];
@@ -9,7 +11,7 @@ window.baidu = {
           <div id="logo" class="baidu-logo">
         </li>`;
     });
-    handleSuggestWords(suggests, 'baidu');
+    handleSuggestWords(suggests, "baidu");
   },
 };
 window.google = {
@@ -24,7 +26,7 @@ window.google = {
             <div id="logo" class="google-logo">
           </li>`;
       });
-      handleSuggestWords(suggests, 'google');
+      handleSuggestWords(suggests, "google");
     },
   },
 };
@@ -43,7 +45,7 @@ window.bing = {
           <div id="logo" class="bing-logo">
         </li>`;
     });
-    handleSuggestWords(suggests, 'bing');
+    handleSuggestWords(suggests, "bing");
   },
 };
 
@@ -133,6 +135,19 @@ function onSearch(search = "") {
   }
   let link = (search || inputDom.attr("data-search")) + word;
   location.href = link;
+}
+
+function handleAddCustom() {
+  const title = $("#customModal").find("#webSiteTitle").val();
+  const url = $("#customModal").find("#webSiteUrl").val();
+  const icon = $("#customModal").find("#webSiteIcon").val();
+  const store = localStorage.getItem(CUSTOM_TAG_KEY);
+  let result = store ? JSON.parse(store) : [{ title, url, icon }];
+  if (store) {
+    result.push({ title, url, icon });
+  }
+  localStorage.setItem(CUSTOM_TAG_KEY, JSON.stringify(result));
+  $("#customModal").modal("hide");
 }
 
 $(function () {

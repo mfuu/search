@@ -28,14 +28,12 @@
       </div>
       <a class="drawer-icon">
         <svg class="gb_h" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-          <path
-            d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM16,6c0,1.1 0.9,2 2,2s2,-0.9 2,-2 -0.9,-2 -2,-2 -2,0.9 -2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z"
-          ></path>
+          <path d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM16,6c0,1.1 0.9,2 2,2s2,-0.9 2,-2 -0.9,-2 -2,-2 -2,0.9 -2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z"></path>
         </svg>
       </a>
     </header>
     <div class="container">
-      <section class="integrated-search ml-2 mr-2">
+      <section class="integrated-search">
         <div class="logo"></div>
         <div class="search-box pl-3 pr-3">
           <div id="searchEngine" class="dropdown">
@@ -46,34 +44,86 @@
           <i id="searchIcon" class="search-icon"></i>
           <ul id="searchSuggest" class="search-suggestions"></ul>
         </div>
-        <script>
-          $(function () {
-            const input = $(`.integrated-search`).find("#searchInput");
-            input.bind('input porpertychange', onInputChange);
-            $.getJSON("config.json", function (data) {
-              window.searchConfig = data;
-              const engine = getEngineDom();
-              const availableEngine = $(".integrated-search").find("#availableEngine");
-              $.each(data, (i, o) => {
-                availableEngine.append(
-                  `<a class="dropdown-item ${o.key}" href="#" data-key="${o.key}" data-search="${o.search}" data-placeholder="${o.placeholder}">${o.title}</a>`
-                );
-              });
-              $.each(data, (i, o) => {
-                if (o.default) {
-                  const item = engine.find(`.${o.key}`);
-                  handleDropdownClick({ target: item[0] });
-                }
-              });
-            });
-          });
-        </script>
+      </section>
+      <section class="custom-tags mt-5">
+        <i id="addCustom" class="add-custom" data-toggle="modal" data-target="#customModal">+</i>
       </section>
     </div>
     <footer>
       <div class="flow"></div>
       <p class="copyright mt-3 mb-2 text-muted text-center"> ©2023 by <a href="https://github.com/mfuu/">mfuu</a>. All rights reserved.</p>
     </footer>
+    <!-- customModal -->
+    <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <b class="modal-title" id="customModalLabel">自定义书签</b>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group row">
+                <label for="webSiteTitle" class="col-sm-2 col-form-label">名称</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="webSiteTitle" placeholder="输入网站名称">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="webSiteUrl" class="col-sm-2 col-form-label">网址</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="webSiteUrl" placeholder="输入网站地址">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="webSiteIcon" class="col-sm-2 col-form-label">图标</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="webSiteIcon" placeholder="输入图标地址">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm" onclick="handleAddCustom(this)">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(function () {
+        const input = $(`.integrated-search`).find("#searchInput");
+        input.bind('input porpertychange', onInputChange);
+        $.getJSON("config.json", function (data) {
+          window.searchConfig = data;
+          const engine = getEngineDom();
+          const availableEngine = $(".integrated-search").find("#availableEngine");
+          $.each(data, (i, o) => {
+            availableEngine.append(
+              `<a class="dropdown-item ${o.key}" href="#" data-key="${o.key}" data-search="${o.search}" data-placeholder="${o.placeholder}">${o.title}</a>`
+            );
+          });
+          $.each(data, (i, o) => {
+            if (o.default) {
+              const item = engine.find(`.${o.key}`);
+              handleDropdownClick({ target: item[0] });
+            }
+          });
+        });
+        // custom tags
+        const tags = $('.custom-tags');
+        const addCustom = tags.children('#addCustom');
+        const store = localStorage.getItem(CUSTOM_TAG_KEY);
+        if (store) {
+          $.each(JSON.parse(store), (i, o) => {
+            addCustom.before(
+              `<a href="${o.url}" target="_blank" class="tag" style="${o.icon ? `background-image: url(${o.icon})` : ''}" data-title="${o.title}"></a>`
+            );
+          });
+        }
+      });
+    </script>
     <script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
