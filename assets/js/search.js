@@ -49,6 +49,16 @@ window.bing = {
   },
 };
 
+function getDomain(url) {
+  const REG = /^https?:\/\/([^\/]+)/i;
+  return url.match(REG)?.[1] || "";
+}
+
+function getProtocol(url) {
+  const REG = /^(https?)/i;
+  return url.match(REG)?.[1] || "";
+}
+
 function getEngineDom() {
   return $(".integrated-search").find("#searchEngine");
 }
@@ -66,6 +76,11 @@ function toggleSearchClass(bool) {
   wrap[bool ? "addClass" : "removeClass"]("sug-show");
 }
 
+function toggleCustomClass(bool) {
+  let wrap = $(".custom-tags");
+  wrap[bool ? "addClass" : "removeClass"]("edit");
+}
+
 function handleSuggestWords(suggests = [], dataKey = "") {
   const suggestDom = getSuggestDom();
   suggestDom.children(`li[data-key="${dataKey}"]`).remove();
@@ -80,7 +95,7 @@ function handleSuggestWords(suggests = [], dataKey = "") {
   }
 }
 
-function handleDropdownClick(e) {
+function handleEngineDropdownClick(e) {
   const inputDom = getInputDom();
   const currentEngine = getEngineDom().find("#currentEngine");
   const engineKey = $(e.target).attr("data-key");
@@ -99,6 +114,16 @@ function handleDropdownClick(e) {
       $(this).addClass("active");
     }
   });
+}
+
+function handleSetupDropdownClick(e) {
+  const dataKey = $(e.target).attr("data-key");
+  switch (dataKey) {
+    case "editTag":
+      toggleCustomClass(true);
+    default:
+      console.log(null);
+  }
 }
 
 function onInputChange() {
@@ -137,17 +162,58 @@ function onSearch(search = "") {
   location.href = link;
 }
 
-function handleAddCustom() {
+function handleAddCustomTag() {
   const title = $("#customModal").find("#webSiteTitle").val();
   const url = $("#customModal").find("#webSiteUrl").val();
-  const icon = $("#customModal").find("#webSiteIcon").val();
   const store = localStorage.getItem(CUSTOM_TAG_KEY);
-  let result = store ? JSON.parse(store) : [{ title, url, icon }];
-  if (store) {
-    result.push({ title, url, icon });
+  const result = store ? JSON.parse(store) : [];
+  const index = result.findIndex((item) => item.url === url);
+  if (index > -1) {
+    result[index] = { title, url };
+  } else {
+    result.push({ title, url });
   }
   localStorage.setItem(CUSTOM_TAG_KEY, JSON.stringify(result));
+  const addCustomTag = $(".custom-tags").children("#addCustomTag");
+  addCustomTag.before(
+    `<a href="${url}" target="_blank" class="tag" style="background-image: url(${getProtocol(url)}://${getDomain(url)}/favicon.ico)" data-title="${title}">
+      <span id="closeTagIcon" class="close-icon">x</span>
+    </a>`
+  );
   $("#customModal").modal("hide");
+}
+
+function handleRemoveCustomTag(e) {
+  const tag = e.target.parentNode;
+  const url = $(tag).attr("href");
+  const store = localStorage.getItem(CUSTOM_TAG_KEY);
+  const result = store ? JSON.parse(store) : [];
+  const index = result.findIndex((item) => item.url === url);
+  if (index > -1) {
+    result.splice(index, 1);
+  }
+  localStorage.setItem(CUSTOM_TAG_KEY, JSON.stringify(result));
+  tag.remove();
+}
+
+function visibleCustomTags() {
+  const wrap = $(".custom-tags");
+  const addCustomTag = wrap.children("#addCustomTag");
+  const store = localStorage.getItem(CUSTOM_TAG_KEY);
+  wrap.children(".tag").remove();
+  if (store) {
+    $.each(JSON.parse(store), (i, o) => {
+      addCustomTag.before(
+        `<a href="${
+          o.url
+        }" target="_blank" class="tag" style="background-image: url(${getProtocol(
+          o.url
+        )}://${getDomain(o.url)}/favicon.ico)" data-title="${o.title}">
+          <span id="closeTagIcon" class="close-icon">x</span>
+        </a>`
+      );
+    });
+  }
 }
 
 $(function () {
@@ -182,8 +248,14 @@ $(function () {
     } else if ($(e.target).closest("#searchIcon").length) {
       onSearch();
     } else if ($(e.target).parents("#availableEngine").length) {
-      handleDropdownClick(e);
+      handleEngineDropdownClick(e);
+    } else if ($(e.target).parents("#setupDropdown").length) {
+      handleSetupDropdownClick(e);
+    } else if ($(e.target).attr("id") === "closeTagIcon") {
+      e.preventDefault();
+      handleRemoveCustomTag(e);
     } else {
+      toggleCustomClass(false);
       toggleSearchClass(false);
     }
   });

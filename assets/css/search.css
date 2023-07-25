@@ -25,8 +25,7 @@ ul {
   -webkit-box-shadow: 0 0 0 5px rgba(0,0,0,.2) inset;
 }
 header {
-  display: flex;
-  justify-content: space-between;
+  height: 56px;
   padding: 8px 15px;
 }
 footer {
@@ -35,6 +34,12 @@ footer {
   right: 0;
   bottom: 0;
   text-align: center;
+}
+svg {
+  fill: currentColor;
+}
+.flex {
+  display: flex;
 }
 .flow {
   background-image: url(../img/wave.svg);
@@ -48,18 +53,27 @@ footer {
   right: 0;
   bottom: 0;
 }
-.contact, .drawer-icon {
-  padding: 8px;
+.sorting {
+  opacity: 0.3;
 }
-.drawer-icon {
-  display: flex;
+.github,
+.drawer-icon,
+.setup-icon {
+  cursor: pointer;
+  padding: 8px;
+  color: #5f6368;
+}
+.drawer-icon,
+.setup-icon {
   border-radius: 50%;
 }
-.drawer-icon:hover {
+.drawer-icon:hover,
+.setup-icon:hover {
   background-color: rgba(60,64,67,.08);
 }
 .dropdown-menu {
   min-width: 6rem;
+  box-shadow: 0 2px 8px 1px rgba(64,60,67,.24);
 }
 .search-icon {
   background-image: url(../img/search_icon.svg);
@@ -114,9 +128,6 @@ footer {
   background-color: transparent;
   font: normal 1rem "Segoe UI",Arial,Helvetica,Sans-Serif;
   box-shadow: 0 2px 4px rgba(0,0,0,.3);
-  align-items: center;
-  justify-content: flex-end;
-  display: flex;
   border-radius: 24px;
   position: relative;
   background-color: #fff;
@@ -191,8 +202,10 @@ footer {
 .custom-tags {
   max-width: 600px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
+  border-radius: 10px;
+}
+.custom-tags.edit {
+  background-color: #f8f9fa;
 }
 .custom-tags .add-custom {
   width: 30px;
@@ -203,21 +216,18 @@ footer {
   border-radius: 50%;
   border: 1px dashed #aaa;
   cursor: pointer;
-  margin: 8px;
-}
-.custom-tags .add-custom:hover {
-  color: #1984ff;
+  display: none;
 }
 .custom-tags .tag {
   position: relative;
   width: 32px;
   height: 32px;
-  margin: 8px 15px;
+  cursor: pointer;
+  color: black;
   border-radius: 50%;
   background-size: cover;
   background-repeat: no-repeat;
   background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
-  cursor: pointer;
 }
 .custom-tags .tag::after {
   content: attr(data-title);
@@ -227,6 +237,33 @@ footer {
   bottom: -18px;
   white-space: nowrap;
   transform: translateX(-50%);
+}
+.custom-tags .add-custom:hover,
+.custom-tags .tag:hover {
+  color: #1984ff;
+}
+.custom-tags .tag,
+.custom-tags .add-custom {
+  margin: 20px 15px;
+}
+.custom-tags.edit .add-custom {
+  display: block;
+}
+.custom-tags .tag .close-icon {
+  position: absolute;
+  top: -15px;
+  right: -20px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  line-height: 18px;
+  text-align: center;
+  color: white;
+  background-color: #ddd;
+  display: none;
+}
+.custom-tags.edit .tag .close-icon {
+  display: block;
 }
 @media (max-width: 768px) {
   .copyright {
