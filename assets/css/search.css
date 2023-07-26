@@ -1,8 +1,17 @@
-html,body {
+html,
+body {
   width: 100%;
   height: 100%;
 }
-p, form, ol, ul, li, dl, dt, dd, h3 {
+p,
+form,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+h3 {
   list-style: none;
 }
 a {
@@ -16,13 +25,14 @@ ul {
   width: 14px;
   height: 14px;
 }
-::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track {
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-track {
   border-radius: 999px;
   border: 5px solid transparent;
 }
 ::-webkit-scrollbar-thumb {
-  box-shadow: inset 0 0 0 5px rgba(0,0,0,.2);
-  -webkit-box-shadow: 0 0 0 5px rgba(0,0,0,.2) inset;
+  box-shadow: inset 0 0 0 5px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.2) inset;
 }
 header {
   height: 56px;
@@ -37,9 +47,6 @@ footer {
 }
 svg {
   fill: currentColor;
-}
-.flex {
-  display: flex;
 }
 .flow {
   background-image: url(../img/wave.svg);
@@ -56,24 +63,26 @@ svg {
 .sorting {
   opacity: 0.3;
 }
-.github,
-.drawer-icon,
-.setup-icon {
-  cursor: pointer;
-  padding: 8px;
+.github-icon,
+.app-icon {
   color: #5f6368;
+  vertical-align: middle;
+  height: 40px;
+  width: 40px;
+  line-height: normal;
 }
-.drawer-icon,
-.setup-icon {
+.app-icon {
   border-radius: 50%;
 }
-.drawer-icon:hover,
-.setup-icon:hover {
-  background-color: rgba(60,64,67,.08);
+.app-icon:hover {
+  background-color: rgba(60, 64, 67, 0.08);
+}
+.github-icon:hover {
+  color: #1984ff;
 }
 .dropdown-menu {
   min-width: 6rem;
-  box-shadow: 0 2px 8px 1px rgba(64,60,67,.24);
+  box-shadow: 0 2px 8px 1px rgba(64, 60, 67, 0.24);
 }
 .search-icon {
   background-image: url(../img/search_icon.svg);
@@ -126,17 +135,16 @@ svg {
   width: 100%;
   max-width: 596px;
   background-color: transparent;
-  font: normal 1rem "Segoe UI",Arial,Helvetica,Sans-Serif;
-  box-shadow: 0 2px 4px rgba(0,0,0,.3);
+  font: normal 1rem "Segoe UI", Arial, Helvetica, Sans-Serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   border-radius: 24px;
   position: relative;
-  background-color: #fff;
   margin: 0 auto;
   transition: 0.5s all;
 }
 .integrated-search .search-box:hover {
-  box-shadow: 0 2px 8px 1px rgba(64,60,67,.24);
-  border-color: rgba(223,225,229,0);
+  box-shadow: 0 2px 8px 1px rgba(64, 60, 67, 0.24);
+  border-color: rgba(223, 225, 229, 0);
 }
 .integrated-search.sug-show .search-box {
   border-radius: 24px 24px 0 0;
@@ -160,7 +168,8 @@ svg {
 .sug-show .search-suggestions {
   max-height: 480px;
   opacity: 1;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.18) 0px 2px 4px 1px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.18) 0px 2px 4px 1px;
 }
 .search-suggestions {
   padding-left: 0px;
@@ -199,26 +208,27 @@ svg {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.custom-tags {
+.bookmark {
   max-width: 600px;
   margin: 0 auto;
   border-radius: 10px;
 }
-.custom-tags.edit {
+.bookmark.edit {
   background-color: #f8f9fa;
 }
-.custom-tags .add-custom {
+.bookmark .add-bookmark {
   width: 30px;
   height: 30px;
   text-align: center;
-  line-height: 26px;
-  color: blue;
+  line-height: 28px;
+  color: #aaa;
   border-radius: 50%;
   border: 1px dashed #aaa;
   cursor: pointer;
+  font-weight: 500;
   display: none;
 }
-.custom-tags .tag {
+.bookmark .item {
   position: relative;
   width: 32px;
   height: 32px;
@@ -227,9 +237,14 @@ svg {
   border-radius: 50%;
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+  background-image: linear-gradient(
+    to top,
+    #f3e7e9 0%,
+    #e3eeff 99%,
+    #e3eeff 100%
+  );
 }
-.custom-tags .tag::after {
+.bookmark .item::after {
   content: attr(data-title);
   font-size: 12px;
   position: absolute;
@@ -238,31 +253,32 @@ svg {
   white-space: nowrap;
   transform: translateX(-50%);
 }
-.custom-tags .add-custom:hover,
-.custom-tags .tag:hover {
+.bookmark .add-bookmark:hover,
+.bookmark .item:hover {
   color: #1984ff;
 }
-.custom-tags .tag,
-.custom-tags .add-custom {
-  margin: 20px 15px;
+.bookmark .item,
+.bookmark .add-bookmark {
+  margin: 20px;
 }
-.custom-tags.edit .add-custom {
+.bookmark.edit .add-bookmark {
   display: block;
 }
-.custom-tags .tag .close-icon {
+.bookmark .item .close-icon {
   position: absolute;
   top: -15px;
   right: -20px;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  line-height: 18px;
+  width: 18px;
+  height: 18px;
+  line-height: 16px;
+  font-size: 14px;
   text-align: center;
   color: white;
   background-color: #ddd;
   display: none;
 }
-.custom-tags.edit .tag .close-icon {
+.bookmark.edit .item .close-icon {
   display: block;
 }
 @media (max-width: 768px) {

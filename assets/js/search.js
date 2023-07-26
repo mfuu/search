@@ -1,4 +1,6 @@
 const CUSTOM_TAG_KEY = "customTagLocalStoreKey";
+let bookmarkTimer = null;
+let bookmarkEdit = null;
 
 window.baidu = {
   sug(data) {
@@ -76,8 +78,8 @@ function toggleSearchClass(bool) {
   wrap[bool ? "addClass" : "removeClass"]("sug-show");
 }
 
-function toggleCustomClass(bool) {
-  let wrap = $(".custom-tags");
+function toggleBookmarkClass(bool) {
+  let wrap = $(".bookmark");
   wrap[bool ? "addClass" : "removeClass"]("edit");
 }
 
@@ -116,16 +118,6 @@ function handleEngineDropdownClick(e) {
   });
 }
 
-function handleSetupDropdownClick(e) {
-  const dataKey = $(e.target).attr("data-key");
-  switch (dataKey) {
-    case "editTag":
-      toggleCustomClass(true);
-    default:
-      console.log(null);
-  }
-}
-
 function onInputChange() {
   var keywords = $(this).val();
   if (!keywords.trim()) {
@@ -162,30 +154,26 @@ function onSearch(search = "") {
   location.href = link;
 }
 
-function handleAddCustomTag() {
-  const title = $("#customModal").find("#webSiteTitle").val();
-  const url = $("#customModal").find("#webSiteUrl").val();
+function handleAddBookmark() {
+  const title = $("#bookmarkModal").find("#webSiteTitle").val();
+  const url = $("#bookmarkModal").find("#webSiteUrl").val();
   const store = localStorage.getItem(CUSTOM_TAG_KEY);
   const result = store ? JSON.parse(store) : [];
-  const index = result.findIndex((item) => item.url === url);
+  const index = result.findIndex((item) => item.url == url);
   if (index > -1) {
     result[index] = { title, url };
   } else {
     result.push({ title, url });
+    addBookmark({ url, title });
   }
   localStorage.setItem(CUSTOM_TAG_KEY, JSON.stringify(result));
-  const addCustomTag = $(".custom-tags").children("#addCustomTag");
-  addCustomTag.before(
-    `<a href="${url}" target="_blank" class="tag" style="background-image: url(${getProtocol(url)}://${getDomain(url)}/favicon.ico)" data-title="${title}">
-      <span id="closeTagIcon" class="close-icon">x</span>
-    </a>`
-  );
-  $("#customModal").modal("hide");
+  $("#bookmarkModal").modal("hide");
+  toogleAddBookmarkStyle();
 }
 
-function handleRemoveCustomTag(e) {
-  const tag = e.target.parentNode;
-  const url = $(tag).attr("href");
+function handleRemoveBookmark(e) {
+  const item = e.target.parentNode;
+  const url = $(item).attr("href");
   const store = localStorage.getItem(CUSTOM_TAG_KEY);
   const result = store ? JSON.parse(store) : [];
   const index = result.findIndex((item) => item.url === url);
@@ -193,26 +181,39 @@ function handleRemoveCustomTag(e) {
     result.splice(index, 1);
   }
   localStorage.setItem(CUSTOM_TAG_KEY, JSON.stringify(result));
-  tag.remove();
+  item.remove();
+  toogleAddBookmarkStyle();
 }
 
-function visibleCustomTags() {
-  const wrap = $(".custom-tags");
-  const addCustomTag = wrap.children("#addCustomTag");
+function visibleBookmarks() {
+  const wrap = $(".bookmark");
   const store = localStorage.getItem(CUSTOM_TAG_KEY);
-  wrap.children(".tag").remove();
+  wrap.children(".item").remove();
   if (store) {
     $.each(JSON.parse(store), (i, o) => {
-      addCustomTag.before(
-        `<a href="${
-          o.url
-        }" target="_blank" class="tag" style="background-image: url(${getProtocol(
-          o.url
-        )}://${getDomain(o.url)}/favicon.ico)" data-title="${o.title}">
-          <span id="closeTagIcon" class="close-icon">x</span>
-        </a>`
-      );
+      addBookmark(o);
     });
+  }
+  toogleAddBookmarkStyle();
+}
+
+function addBookmark({ url, title }) {
+  const addIcon = $(".bookmark").children("#addBookmark");
+  addIcon.before(
+    `<a href="${url}" target="_blank" class="item" style="background-image: url(${getProtocol(
+      url
+    )}://${getDomain(url)}/favicon.ico)" data-title="${title}">
+      <span id="closeTagIcon" class="close-icon">x</span>
+    </a>`
+  );
+}
+
+function toogleAddBookmarkStyle() {
+  const wrap = $(".bookmark");
+  if (wrap.children().length <= 1) {
+    wrap.children("#addBookmark").css("display", "block");
+  } else {
+    wrap.children("#addBookmark").css("display", "");
   }
 }
 
@@ -221,13 +222,33 @@ $(function () {
     const inputDom = getInputDom();
     inputDom.focus();
   });
+  $(document).on("mousedown", ".bookmark .item", function (e) {
+    bookmarkTimer = setTimeout(() => {
+      toggleBookmarkClass(true);
+      bookmarkEdit = true;
+    }, 1000);
+  });
+  $(document).on("mouseup", ".bookmark .item", function (e) {
+    clearTimeout(bookmarkTimer);
+    bookmarkTimer = null;
+  });
+  $(document).on("mouseout", ".bookmark .item", function (e) {
+    clearTimeout(bookmarkTimer);
+    bookmarkTimer = null;
+  });
   $(document).keyup(function (event) {
     if (event.keyCode == 13) {
       onSearch();
     }
   });
   $(document).on("click", function (e) {
-    if ($(e.target).parents("#searchSuggest").length) {
+    if (bookmarkEdit) {
+      e.preventDefault();
+      clearTimeout(bookmarkTimer);
+      bookmarkTimer = null;
+      bookmarkEdit = null;
+      return;
+    } else if ($(e.target).parents("#searchSuggest").length) {
       const li = $(e.target).closest("li");
       const txt = li.find("#innerText").text();
       const key = li.attr("data-key");
@@ -249,14 +270,18 @@ $(function () {
       onSearch();
     } else if ($(e.target).parents("#availableEngine").length) {
       handleEngineDropdownClick(e);
-    } else if ($(e.target).parents("#setupDropdown").length) {
-      handleSetupDropdownClick(e);
     } else if ($(e.target).attr("id") === "closeTagIcon") {
       e.preventDefault();
-      handleRemoveCustomTag(e);
+      handleRemoveBookmark(e);
+    } else if ($(e.target).closest(".bookmark").length) {
+      if ($(e.target).attr("class") !== "item") {
+        e.preventDefault();
+      }
+    } else if ($(e.target).closest(".modal").length) {
+      return;
     } else {
-      toggleCustomClass(false);
       toggleSearchClass(false);
+      toggleBookmarkClass(false);
     }
   });
 });
