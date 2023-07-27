@@ -1,6 +1,6 @@
-const CUSTOM_TAG_KEY = "customTagLocalStoreKey";
-let bookmarkTimer = null;
-let bookmarkEdit = null;
+const CUSTOM_BOOKMARK_KEY = "customBookmarkLocalStoreKey";
+const SEARCH_CONFIG_KEY = "integratedSearchConfigs";
+const APP_CONFIG_KEY = "recommendedAppConfigs";
 
 window.baidu = {
   sug(data) {
@@ -74,13 +74,24 @@ function getInputDom() {
 }
 
 function toggleSearchClass(bool) {
-  let wrap = $(".integrated-search");
-  wrap[bool ? "addClass" : "removeClass"]("sug-show");
+  $(".integrated-search")[bool ? "addClass" : "removeClass"]("sug-show");
 }
 
 function toggleBookmarkClass(bool) {
-  let wrap = $(".bookmark");
-  wrap[bool ? "addClass" : "removeClass"]("edit");
+  $(".bookmark")[bool ? "addClass" : "removeClass"]("edit");
+}
+
+function toogleContextmenuStyle(bool) {
+  $("contextmenu").css("display", bool ? "block" : "");
+}
+
+function toogleAddBookmarkStyle() {
+  const wrap = $(".bookmark");
+  if (wrap.children().length <= 1) {
+    wrap.children("#addBookmark").css("display", "block");
+  } else {
+    wrap.children("#addBookmark").css("display", "");
+  }
 }
 
 function handleSuggestWords(suggests = [], dataKey = "") {
@@ -125,7 +136,7 @@ function onInputChange() {
     getSuggestDom().empty();
     return;
   }
-  $.each(window.searchConfig, (i, o) => {
+  $.each(window[SEARCH_CONFIG_KEY], (i, o) => {
     $.ajax({
       url: o.suggest.replace("#content#", keywords),
       dataType: "jsonp",
@@ -157,7 +168,7 @@ function onSearch(search = "") {
 function handleAddBookmark() {
   const title = $("#bookmarkModal").find("#webSiteTitle").val();
   const url = $("#bookmarkModal").find("#webSiteUrl").val();
-  const store = localStorage.getItem(CUSTOM_TAG_KEY);
+  const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
   const result = store ? JSON.parse(store) : [];
   const index = result.findIndex((item) => item.url == url);
   if (index > -1) {
@@ -166,7 +177,7 @@ function handleAddBookmark() {
     result.push({ title, url });
     addBookmark({ url, title });
   }
-  localStorage.setItem(CUSTOM_TAG_KEY, JSON.stringify(result));
+  localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
   $("#bookmarkModal").modal("hide");
   toogleAddBookmarkStyle();
 }
@@ -174,20 +185,20 @@ function handleAddBookmark() {
 function handleRemoveBookmark(e) {
   const item = e.target.parentNode;
   const url = $(item).attr("href");
-  const store = localStorage.getItem(CUSTOM_TAG_KEY);
+  const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
   const result = store ? JSON.parse(store) : [];
   const index = result.findIndex((item) => item.url === url);
   if (index > -1) {
     result.splice(index, 1);
   }
-  localStorage.setItem(CUSTOM_TAG_KEY, JSON.stringify(result));
+  localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
   item.remove();
   toogleAddBookmarkStyle();
 }
 
 function visibleBookmarks() {
   const wrap = $(".bookmark");
-  const store = localStorage.getItem(CUSTOM_TAG_KEY);
+  const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
   wrap.children(".item").remove();
   if (store) {
     $.each(JSON.parse(store), (i, o) => {
@@ -208,54 +219,37 @@ function addBookmark({ url, title }) {
   );
 }
 
-function toogleAddBookmarkStyle() {
-  const wrap = $(".bookmark");
-  if (wrap.children().length <= 1) {
-    wrap.children("#addBookmark").css("display", "block");
-  } else {
-    wrap.children("#addBookmark").css("display", "");
-  }
-}
-
 $(function () {
   $(document).ready(function () {
     const inputDom = getInputDom();
     inputDom.focus();
-  });
-  $(document).on("mousedown", ".bookmark .item", function (e) {
-    bookmarkTimer = setTimeout(() => {
-      toggleBookmarkClass(true);
-      bookmarkEdit = true;
-    }, 1000);
-  });
-  $(document).on("mouseup", ".bookmark .item", function (e) {
-    clearTimeout(bookmarkTimer);
-    bookmarkTimer = null;
-  });
-  $(document).on("mouseout", ".bookmark .item", function (e) {
-    clearTimeout(bookmarkTimer);
-    bookmarkTimer = null;
   });
   $(document).keyup(function (event) {
     if (event.keyCode == 13) {
       onSearch();
     }
   });
-  $(document).on("click", function (e) {
-    if (bookmarkEdit) {
-      e.preventDefault();
-      clearTimeout(bookmarkTimer);
-      bookmarkTimer = null;
-      bookmarkEdit = null;
+  $(document).on("contextmenu", ".bookmark", function (e) {
+    if ($(e.target).closest(".item").length) {
       return;
-    } else if ($(e.target).parents("#searchSuggest").length) {
+    } else {
+      e.preventDefault();
+      const pageX = e.pageX + 6;
+      const pageY = e.pageY;
+      $("contextmenu").css("left", pageX);
+      $("contextmenu").css("top", pageY);
+      toogleContextmenuStyle(true);
+    }
+  });
+  $(document).on("click", function (e) {
+    if ($(e.target).parents("#searchSuggest").length) {
       const li = $(e.target).closest("li");
       const txt = li.find("#innerText").text();
       const key = li.attr("data-key");
       const inputDom = getInputDom();
       inputDom.val(txt);
       let search = "";
-      $.each(window.searchConfig, (i, o) => {
+      $.each(window[SEARCH_CONFIG_KEY], (i, o) => {
         if (o.key === key) {
           search = o.search;
         }
@@ -273,15 +267,18 @@ $(function () {
     } else if ($(e.target).attr("id") === "closeTagIcon") {
       e.preventDefault();
       handleRemoveBookmark(e);
-    } else if ($(e.target).closest(".bookmark").length) {
-      if ($(e.target).attr("class") !== "item") {
-        e.preventDefault();
-      }
     } else if ($(e.target).closest(".modal").length) {
+      return;
+    } else if ($(e.target).closest("contextmenu").length) {
+      toogleContextmenuStyle(false);
+      return;
+    } else if ($(e.target).closest(".bookmark").length) {
+      toogleContextmenuStyle(false);
       return;
     } else {
       toggleSearchClass(false);
       toggleBookmarkClass(false);
     }
+    toogleContextmenuStyle(false);
   });
 });

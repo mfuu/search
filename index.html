@@ -54,9 +54,13 @@
         </div>
       </section>
 
-      <section class="bookmark d-flex align-items-center flex-wrap mt-4">
+      <section class="bookmark d-flex align-items-center justify-content-center flex-wrap mt-4">
         <span id="addBookmark" class="add-bookmark" data-bs-toggle="modal" data-bs-target="#bookmarkModal" title="添加书签">+</span>
       </section>
+
+      <contextmenu>
+        <li onclick="toggleBookmarkClass(true)">编辑书签</li>
+      </contextmenu>
 
       <!-- bookmarkModal -->
       <div class="modal fade" id="bookmarkModal" tabindex="-1" aria-labelledby="bookmarkModalLabel" aria-hidden="true">
@@ -94,17 +98,20 @@
     <script>
       $(function () {
         const input = $(`.integrated-search`).find("#searchInput");
-        input.bind('input porpertychange', onInputChange);
+        input.bind("input porpertychange", onInputChange);
         $.getJSON("config.json", function (data) {
-          window.searchConfig = data;
+          const { app, search } = data;
+          window[APP_CONFIG_KEY] = app;
+          window[SEARCH_CONFIG_KEY] = search;
           const engine = getEngineDom();
-          const availableEngine = $(".integrated-search").find("#availableEngine");
-          $.each(data, (i, o) => {
+          const availableEngine =
+            $(".integrated-search").find("#availableEngine");
+          $.each(search, (i, o) => {
             availableEngine.append(
               `<a class="dropdown-item ${o.key}" href="#" data-key="${o.key}" data-search="${o.search}" data-placeholder="${o.placeholder}">${o.title}</a>`
             );
           });
-          $.each(data, (i, o) => {
+          $.each(search, (i, o) => {
             if (o.default) {
               const item = engine.find(`.${o.key}`);
               handleEngineDropdownClick({ target: item[0] });

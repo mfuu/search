@@ -210,6 +210,7 @@ svg {
 }
 .bookmark {
   max-width: 600px;
+  min-height: 70px;
   margin: 0 auto;
   border-radius: 10px;
 }
@@ -280,6 +281,23 @@ svg {
 }
 .bookmark.edit .item .close-icon {
   display: block;
+}
+contextmenu {
+  position: fixed;
+  display: none;
+  box-shadow: #919aa5 1px 1px 2px 0px;
+  padding: 8px 0px;
+  border: 1px solid rgba(233, 236, 239, 0.8);
+  border-radius: 5px;
+  font-size: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+contextmenu li {
+  padding: 8px;
+  cursor: pointer;
+}
+contextmenu li:hover {
+  background-color: rgba(60, 64, 67, 0.08);
 }
 @media (max-width: 768px) {
   .copyright {
