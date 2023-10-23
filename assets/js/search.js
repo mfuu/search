@@ -234,8 +234,13 @@ $(function () {
       return;
     } else {
       e.preventDefault();
-      const pageX = e.pageX + 6;
-      const pageY = e.pageY;
+      let pageX = e.pageX + 6;
+      let pageY = e.pageY;
+      const { clientWidth } = document.documentElement;
+      const menuWidth = $("contextmenu").width();
+      if (clientWidth - pageX < menuWidth + 1) {
+        pageX -= menuWidth;
+      }
       $("contextmenu").css("left", pageX);
       $("contextmenu").css("top", pageY);
       toogleContextmenuStyle(true);

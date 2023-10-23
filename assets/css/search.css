@@ -48,6 +48,10 @@ footer {
 svg {
   fill: currentColor;
 }
+.py-12 {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
 .flow {
   background-image: url(../img/wave.svg);
   background-repeat: no-repeat;
@@ -87,21 +91,25 @@ svg {
 .search-icon {
   background-image: url(../img/search_icon.svg);
   background-repeat: no-repeat;
+  background-position: 50%, 50%;
 }
 .baidu-logo {
   background-image: url(../img/baidu_logo.svg);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 20px;
+  background-position: 50%, 50%;
 }
 .bing-logo {
   background-image: url(../img/bing_logo.svg);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 20px;
+  background-position: 50%, 50%;
 }
 .google-logo {
   background-image: url(../img/google_logo.svg);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 20px;
+  background-position: 50%, 50%;
 }
 .integrated-search {
   margin: auto;
@@ -110,10 +118,9 @@ svg {
 }
 .integrated-search #currentEngine {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 44px;
+  height: 44px;
   cursor: pointer;
-  transition: 1s all;
 }
 .integrated-search input {
   position: relative;
@@ -121,7 +128,6 @@ svg {
   width: 100%;
   z-index: 100;
   background-color: transparent;
-  padding: 12px 10px 12px 12px;
   border: 0;
   flex: 1;
   outline: none;
@@ -150,9 +156,9 @@ svg {
   border-radius: 24px 24px 0 0;
 }
 .integrated-search .search-icon {
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
+  display: block;
+  width: 44px;
+  height: 44px;
   cursor: pointer;
 }
 .search-suggestions {
@@ -190,7 +196,9 @@ svg {
   background-color: #20212419;
 }
 .search-suggestions .suggest-icon {
-  margin-left: 13px;
+  width: 24px;
+  height: 24px;
+  margin-left: 18px;
   transform: scale(0.8);
 }
 .search-suggestions #logo {
@@ -199,6 +207,7 @@ svg {
   top: 8px;
   width: 16px;
   height: 16px;
+  background-size: 16px;
 }
 .search-suggestions #innerText {
   flex-grow: 1;
@@ -289,7 +298,6 @@ contextmenu {
   padding: 8px 0px;
   border: 1px solid rgba(233, 236, 239, 0.8);
   border-radius: 5px;
-  font-size: 0.5rem;
   background-color: rgba(255, 255, 255, 0.6);
 }
 contextmenu li {
@@ -318,6 +326,9 @@ contextmenu li:hover {
   }
   .modal-footer {
     padding: 0.5rem 1rem;
+  }
+  contextmenu {
+    font-size: 0.5rem;
   }
 }
 @keyframes moveIn {
