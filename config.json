@@ -2,25 +2,28 @@
   "search": [
     {
       "key": "bing",
+      "index": 1,
       "title": "必应",
       "placeholder": "输入搜索词",
       "jsonp": "window.bing.sug",
       "callback": "window.bing.sug",
       "search": "https://cn.bing.com/search?q=",
-      "suggest": "https://api.bing.com/qsonhs.aspx?type=cb&q=#content#&cb=window.bing.sug",
-      "default": true
+      "suggest": "https://api.bing.com/qsonhs.aspx?type=cb&q=#content#&cb=window.bing.sug"
     },
     {
       "key": "baidu",
+      "index": 0,
       "title": "百度",
       "placeholder": "百度一下",
       "jsonp": "cb",
       "callback": "window.baidu.sug",
       "search": "https://www.baidu.com/s?wd=",
-      "suggest": "https://suggestion.baidu.com/su?wd=#content#&cb=window.baidu.sug"
+      "suggest": "https://suggestion.baidu.com/su?wd=#content#&cb=window.baidu.sug",
+      "default": true
     },
     {
       "key": "google",
+      "index": 2,
       "title": "Google",
       "placeholder": "在 Google 中搜索",
       "jsonp": "jsonp",

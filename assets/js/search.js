@@ -184,7 +184,7 @@ function handleAddBookmark() {
 
 function handleRemoveBookmark(e) {
   const item = e.target.parentNode;
-  const url = $(item).attr("href");
+  const url = getBookmarkUrl(item);
   const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
   const result = store ? JSON.parse(store) : [];
   const index = result.findIndex((item) => item.url === url);
@@ -194,6 +194,10 @@ function handleRemoveBookmark(e) {
   localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
   item.remove();
   toogleAddBookmarkStyle();
+}
+
+function getBookmarkUrl(item) {
+  return $(item).find('.jump').attr("href");
 }
 
 function visibleBookmarks() {
@@ -210,13 +214,36 @@ function visibleBookmarks() {
 
 function addBookmark({ url, title }) {
   const addIcon = $(".bookmark").children("#addBookmark");
-  addIcon.before(
-    `<a href="${url}" target="_blank" class="item" style="background-image: url(${getProtocol(
-      url
-    )}://${getDomain(url)}/favicon.ico)" data-title="${title}">
+  addIcon.before(`
+    <div class="item">
+      <a
+        class="jump"
+        href="${url}"
+        target="_blank"
+        data-title="${title}"
+        style="background-image: url(${getProtocol(url)}://${getDomain(url)}/favicon.ico)"
+      ></a>
       <span id="closeTagIcon" class="close-icon">x</span>
-    </a>`
+    </div>`
   );
+}
+
+function bookmarkSortable() {
+  new Sortable($(".bookmark").get(0), {
+    draggable: '.edit > .item',
+    onDrop: ({ from, to, changed }) => {
+      if (!changed) return false;
+      const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
+      const result = store ? JSON.parse(store) : [];
+      const fromItem = result.find(item => item.url === getBookmarkUrl(from.node));
+      const toItem = result.find(item => item.url === getBookmarkUrl(to.node));
+      const fromIndex = result.indexOf(fromItem);
+      const toIndex = result.indexOf(toItem);
+      result.splice(fromIndex, 1);
+      result.splice(toIndex, 0, fromItem);
+      localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
+    }
+  });
 }
 
 $(function () {

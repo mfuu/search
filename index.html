@@ -54,7 +54,7 @@
         </div>
       </section>
 
-      <section class="bookmark d-flex align-items-center justify-content-center flex-wrap mt-4">
+      <section class="bookmark d-flex align-items-center flex-wrap mt-4">
         <span id="addBookmark" class="add-bookmark" data-bs-toggle="modal" data-bs-target="#bookmarkModal" title="添加书签">+</span>
       </section>
 
@@ -101,6 +101,7 @@
         input.bind("input porpertychange", onInputChange);
         $.getJSON("config.json", function (data) {
           const { app, search } = data;
+          search.sort((a, b) => a.index - b.index);
           window[APP_CONFIG_KEY] = app;
           window[SEARCH_CONFIG_KEY] = search;
           const engine = getEngineDom();
@@ -119,6 +120,7 @@
           });
         });
         visibleBookmarks();
+        bookmarkSortable();
       });
     </script>
     <script src="https://unpkg.com/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>

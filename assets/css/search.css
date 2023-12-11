@@ -197,6 +197,7 @@ svg {
 }
 .search-suggestions .suggest-icon {
   width: 24px;
+  min-width: 24px;
   height: 24px;
   margin-left: 18px;
   transform: scale(0.8);
@@ -240,11 +241,14 @@ svg {
 }
 .bookmark .item {
   position: relative;
+  cursor: pointer;
+}
+.bookmark .jump {
+  display: block;
   width: 32px;
   height: 32px;
-  cursor: pointer;
   color: black;
-  border-radius: 50%;
+  border-radius: 5px;
   background-size: cover;
   background-repeat: no-repeat;
   background-image: linear-gradient(
@@ -254,7 +258,7 @@ svg {
     #e3eeff 100%
   );
 }
-.bookmark .item::after {
+.bookmark .jump::after {
   content: attr(data-title);
   font-size: 12px;
   position: absolute;
@@ -264,7 +268,7 @@ svg {
   transform: translateX(-50%);
 }
 .bookmark .add-bookmark:hover,
-.bookmark .item:hover {
+.bookmark .jump:hover {
   color: #1984ff;
 }
 .bookmark .item,
