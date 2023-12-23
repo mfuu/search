@@ -231,16 +231,15 @@ function addBookmark({ url, title }) {
 function bookmarkSortable() {
   new Sortable($(".bookmark").get(0), {
     draggable: '.edit > .item',
-    onDrop: ({ from, to, changed }) => {
-      if (!changed) return false;
+    onDrop: ({ node, target, oldIndex, newIndex }) => {
+      if (oldIndex === newIndex) return;
       const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
       const result = store ? JSON.parse(store) : [];
-      const fromItem = result.find(item => item.url === getBookmarkUrl(from.node));
-      const toItem = result.find(item => item.url === getBookmarkUrl(to.node));
-      const fromIndex = result.indexOf(fromItem);
-      const toIndex = result.indexOf(toItem);
+      const fromIndex = result.findIndex(item => item.url === getBookmarkUrl(node));
+      const toIndex = result.findIndex(item => item.url === getBookmarkUrl(target));
+      const item = result[fromIndex];;
       result.splice(fromIndex, 1);
-      result.splice(toIndex, 0, fromItem);
+      result.splice(toIndex, 0, item);
       localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
     }
   });
