@@ -197,7 +197,7 @@ function handleRemoveBookmark(e) {
 }
 
 function getBookmarkUrl(item) {
-  return $(item).find('.jump').attr("href");
+  return $(item).attr("href");
 }
 
 function visibleBookmarks() {
@@ -215,16 +215,15 @@ function visibleBookmarks() {
 function addBookmark({ url, title }) {
   const addIcon = $(".bookmark").children("#addBookmark");
   addIcon.before(`
-    <div class="item">
-      <a
-        class="jump"
-        href="${url}"
-        target="_blank"
-        data-title="${title}"
-        style="background-image: url(${getProtocol(url)}://${getDomain(url)}/favicon.ico)"
-      ></a>
+    <a class="item" href="${url}" target="_blank" data-title="${title}">
+      <img
+        src="${getProtocol(url)}://${getDomain(url)}/favicon.ico"
+        alt="${title[0]}"
+        onerror="this.src='';this.onerror=null;"
+        class="favicon"
+      />
       <span id="closeTagIcon" class="close-icon">x</span>
-    </div>`
+    </a>`
   );
 }
 
