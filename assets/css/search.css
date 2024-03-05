@@ -246,7 +246,7 @@ svg {
   width: 32px;
   height: 32px;
   color: black;
-  border-radius: 50%;
+  border-radius: 25%;
 }
 .bookmark .item::after {
   content: attr(data-title);

@@ -311,4 +311,10 @@ $(function () {
     }
     toogleContextmenuStyle(false);
   });
+  $(document).on("touchend", function (e) {
+    if ($(e.target).attr("id") === "closeTagIcon") {
+      e.preventDefault();
+      handleRemoveBookmark(e);
+    }
+  });
 });
