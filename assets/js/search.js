@@ -1,5 +1,5 @@
 const CUSTOM_BOOKMARK_KEY = "customBookmarkLocalStoreKey";
-const SEARCH_CONFIG_KEY = "integratedSearchConfigs";
+const ENGINE_CONFIG_KEY = "SearchEngineConfigs";
 const APP_CONFIG_KEY = "recommendedAppConfigs";
 
 window.baidu = {
@@ -9,8 +9,8 @@ window.baidu = {
       return `
         <li data-key="baidu" title="${item}">
           <i class="search-icon suggest-icon"></i>
-          <div id="innerText">${item}</div>
-          <div id="logo" class="baidu-logo">
+          <div class="inner-text">${item}</div>
+          <div class="logo baidu-logo">
         </li>`;
     });
     handleSuggestWords(suggests, "baidu");
@@ -24,8 +24,8 @@ window.google = {
         return `
           <li data-key="google" title="${item[0]}">
             <i class="search-icon suggest-icon"></i>
-            <div id="innerText">${item[0]}</div>
-            <div id="logo" class="google-logo">
+            <div class="inner-text">${item[0]}</div>
+            <div class="logo google-logo">
           </li>`;
       });
       handleSuggestWords(suggests, "google");
@@ -43,8 +43,8 @@ window.bing = {
       return `
         <li data-key="bing" title="${item}">
           <i class="search-icon suggest-icon"></i>
-          <div id="innerText">${item}</div>
-          <div id="logo" class="bing-logo">
+          <div class="inner-text">${item}</div>
+          <div class="logo bing-logo">
         </li>`;
     });
     handleSuggestWords(suggests, "bing");
@@ -62,31 +62,31 @@ function getProtocol(url) {
 }
 
 function getEngineDom() {
-  return $(".integrated-search").find("#searchEngine");
+  return $("#search").find("#searchEngine");
 }
 
 function getSuggestDom() {
-  return $(".integrated-search").find("#searchSuggest");
+  return $("#search").find("#searchSuggest");
 }
 
 function getInputDom() {
-  return $(".integrated-search").find("#searchInput");
+  return $("#search").find("#searchInput");
 }
 
 function toggleSearchClass(bool) {
-  $(".integrated-search")[bool ? "addClass" : "removeClass"]("sug-show");
+  $("#search")[bool ? "addClass" : "removeClass"]("sug-show");
 }
 
 function toggleBookmarkClass(bool) {
-  $(".bookmark")[bool ? "addClass" : "removeClass"]("edit");
+  $("#bookmark")[bool ? "addClass" : "removeClass"]("edit");
 }
 
-function toogleContextmenuStyle(bool) {
+function toogleContextmenuVisible(bool) {
   $("contextmenu").css("display", bool ? "block" : "");
 }
 
-function toogleAddBookmarkStyle() {
-  const wrap = $(".bookmark");
+function toogleAddBookmarkVisible() {
+  const wrap = $("#bookmark");
   if (wrap.children().length <= 1) {
     wrap.children("#addBookmark").css("display", "block");
   } else {
@@ -117,11 +117,19 @@ function handleEngineDropdownClick(e) {
   inputDom.attr("data-search", searchUrl);
   inputDom.attr("placeholder", placeholder);
   currentEngine.attr("data-key", engineKey);
-  currentEngine.removeClass();
+  currentEngine.removeClass(function (i, cls) {
+    const classToRemove = [];
+    cls.split(/\s+/).forEach((item) => {
+      if (item.match(/^.*-logo$/)) {
+        classToRemove.push(item);
+      }
+    });
+    return classToRemove.join(" ");
+  });
   currentEngine.addClass(`${engineKey}-logo`);
 
-  const availableEngine = getEngineDom().find("#availableEngine");
-  availableEngine.children().each(function (i, o) {
+  const engineDropdown = getEngineDom().find("#engineDropdown");
+  engineDropdown.children().each(function (i, o) {
     $(this).removeClass("active");
     if ($(this).attr("data-key") === engineKey) {
       $(this).addClass("active");
@@ -136,7 +144,7 @@ function onInputChange() {
     getSuggestDom().empty();
     return;
   }
-  $.each(window[SEARCH_CONFIG_KEY], (i, o) => {
+  $.each(window[ENGINE_CONFIG_KEY], (i, o) => {
     $.ajax({
       url: o.suggest.replace("#content#", keywords),
       dataType: "jsonp",
@@ -179,7 +187,7 @@ function handleAddBookmark() {
   }
   localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
   $("#bookmarkModal").modal("hide");
-  toogleAddBookmarkStyle();
+  toogleAddBookmarkVisible();
 }
 
 function handleRemoveBookmark(e) {
@@ -193,7 +201,7 @@ function handleRemoveBookmark(e) {
   }
   localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
   item.remove();
-  toogleAddBookmarkStyle();
+  toogleAddBookmarkVisible();
 }
 
 function getBookmarkUrl(item) {
@@ -201,7 +209,7 @@ function getBookmarkUrl(item) {
 }
 
 function visibleBookmarks() {
-  const wrap = $(".bookmark");
+  const wrap = $("#bookmark");
   const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
   wrap.children(".item").remove();
   if (store) {
@@ -209,11 +217,11 @@ function visibleBookmarks() {
       addBookmark(o);
     });
   }
-  toogleAddBookmarkStyle();
+  toogleAddBookmarkVisible();
 }
 
 function addBookmark({ url, title }) {
-  const addIcon = $(".bookmark").children("#addBookmark");
+  const addIcon = $("#bookmark").children("#addBookmark");
   addIcon.before(`
     <a class="item" href="${url}" target="_blank" data-title="${title}">
       <img
@@ -228,7 +236,7 @@ function addBookmark({ url, title }) {
 }
 
 function bookmarkSortable() {
-  new Sortable($(".bookmark").get(0), {
+  new Sortable($("#bookmark").get(0), {
     draggable: '.edit > .item',
     onDrop: ({ node, target, oldIndex, newIndex }) => {
       if (oldIndex === newIndex) return;
@@ -254,7 +262,7 @@ $(function () {
       onSearch();
     }
   });
-  $(document).on("contextmenu", ".bookmark", function (e) {
+  $(document).on("contextmenu", "#bookmark", function (e) {
     if ($(e.target).closest(".item").length) {
       return;
     } else {
@@ -268,18 +276,18 @@ $(function () {
       }
       $("contextmenu").css("left", pageX);
       $("contextmenu").css("top", pageY);
-      toogleContextmenuStyle(true);
+      toogleContextmenuVisible(true);
     }
   });
   $(document).on("click", function (e) {
     if ($(e.target).parents("#searchSuggest").length) {
       const li = $(e.target).closest("li");
-      const txt = li.find("#innerText").text();
+      const txt = li.find(".inner-text").text();
       const key = li.attr("data-key");
       const inputDom = getInputDom();
       inputDom.val(txt);
       let search = "";
-      $.each(window[SEARCH_CONFIG_KEY], (i, o) => {
+      $.each(window[ENGINE_CONFIG_KEY], (i, o) => {
         if (o.key === key) {
           search = o.search;
         }
@@ -292,7 +300,7 @@ $(function () {
       }
     } else if ($(e.target).closest("#searchIcon").length) {
       onSearch();
-    } else if ($(e.target).parents("#availableEngine").length) {
+    } else if ($(e.target).parents("#engineDropdown").length) {
       handleEngineDropdownClick(e);
     } else if ($(e.target).attr("id") === "closeTagIcon") {
       e.preventDefault();
@@ -300,16 +308,16 @@ $(function () {
     } else if ($(e.target).closest(".modal").length) {
       return;
     } else if ($(e.target).closest("contextmenu").length) {
-      toogleContextmenuStyle(false);
+      toogleContextmenuVisible(false);
       return;
-    } else if ($(e.target).closest(".bookmark").length) {
-      toogleContextmenuStyle(false);
+    } else if ($(e.target).closest("#bookmark").length) {
+      toogleContextmenuVisible(false);
       return;
     } else {
       toggleSearchClass(false);
       toggleBookmarkClass(false);
     }
-    toogleContextmenuStyle(false);
+    toogleContextmenuVisible(false);
   });
   $(document).on("touchend", function (e) {
     if ($(e.target).attr("id") === "closeTagIcon") {

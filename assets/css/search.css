@@ -52,18 +52,6 @@ svg {
   padding-top: 12px;
   padding-bottom: 12px;
 }
-.flow {
-  background-image: url(../img/wave.svg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 350px;
-}
-.copyright {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
 .sorting {
   opacity: 0.3;
 }
@@ -111,18 +99,18 @@ svg {
   background-size: 20px;
   background-position: 50%, 50%;
 }
-.integrated-search {
+.search {
   margin: auto;
   padding-top: 56px;
   transition: 0.5s all;
 }
-.integrated-search #currentEngine {
+.search .current {
   display: block;
   width: 44px;
   height: 44px;
   cursor: pointer;
 }
-.integrated-search input {
+.search input {
   position: relative;
   height: 100%;
   width: 100%;
@@ -134,10 +122,10 @@ svg {
   font: inherit;
   color: #000;
 }
-.integrated-search .logo {
+.search .logo {
   height: 56px;
 }
-.integrated-search .search-box {
+.search .search-box {
   width: 100%;
   max-width: 596px;
   background-color: transparent;
@@ -148,14 +136,14 @@ svg {
   margin: 0 auto;
   transition: 0.5s all;
 }
-.integrated-search .search-box:hover {
+.search .search-box:hover {
   box-shadow: 0 2px 8px 1px rgba(64, 60, 67, 0.24);
   border-color: rgba(223, 225, 229, 0);
 }
-.integrated-search.sug-show .search-box {
+.search.sug-show .search-box {
   border-radius: 24px 24px 0 0;
 }
-.integrated-search .search-icon {
+.search .search-icon {
   display: block;
   width: 44px;
   height: 44px;
@@ -202,7 +190,7 @@ svg {
   margin-left: 18px;
   transform: scale(0.8);
 }
-.search-suggestions #logo {
+.search-suggestions .logo {
   position: absolute;
   right: 10px;
   top: 8px;
@@ -210,7 +198,7 @@ svg {
   height: 16px;
   background-size: 16px;
 }
-.search-suggestions #innerText {
+.search-suggestions .inner-text {
   flex-grow: 1;
   overflow: hidden;
   margin-inline-end: 34px;
@@ -326,10 +314,7 @@ contextmenu li:hover {
   background-color: rgba(60, 64, 67, 0.08);
 }
 @media (max-width: 768px) {
-  .copyright {
-    opacity: 0;
-  }
-  .integrated-search {
+  .search {
     padding-top: 0;
   }
   .sug-show .search-suggestions {

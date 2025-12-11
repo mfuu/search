@@ -41,12 +41,12 @@
     </header>
 
     <main class="container">
-      <section class="integrated-search">
+      <section id="search" class="search">
         <div class="logo"></div>
         <div class="search-box d-flex align-items-center justify-content-end px-2">
           <div id="searchEngine" class="dropdown position-relative">
-            <i id="currentEngine" data-bs-toggle="dropdown" aria-expanded="false"></i>
-            <ul id="availableEngine" class="dropdown-menu"></ul>
+            <i id="currentEngine" class="current" data-bs-toggle="dropdown" aria-expanded="false"></i>
+            <ul id="engineDropdown" class="dropdown-menu"></ul>
           </div>
           <input id="searchInput" class="py-12" type="text" autocomplete="off" />
           <i id="searchIcon" class="search-icon"></i>
@@ -54,7 +54,7 @@
         </div>
       </section>
 
-      <section class="bookmark d-flex align-items-center flex-wrap mt-4">
+      <section id="bookmark" class="bookmark d-flex align-items-center flex-wrap mt-4">
         <span id="addBookmark" class="add-bookmark" data-bs-toggle="modal" data-bs-target="#bookmarkModal" title="添加书签">+</span>
       </section>
 
@@ -63,7 +63,7 @@
       </contextmenu>
 
       <!-- bookmarkModal -->
-      <div class="modal fade" id="bookmarkModal" tabindex="-1" aria-labelledby="bookmarkModalLabel" aria-hidden="true">
+      <div id="bookmarkModal" class="modal fade" tabindex="-1" aria-labelledby="bookmarkModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
@@ -91,30 +91,29 @@
     </main>
 
     <footer>
-      <div class="flow"></div>
-      <p class="copyright my-2 text-muted text-center"> ©2023 by <a href="https://github.com/mfuu/">mfuu</a>. All rights reserved.</p>
+      <p class="my-2 text-muted text-center">Search © 2023 By <a href="https://github.com/mfuu/">mfuu</a></p>
     </footer>
 
     <script>
       $(function () {
-        const input = $(`.integrated-search`).find("#searchInput");
+        const input = $("#search").find("#searchInput");
         input.bind("input porpertychange", onInputChange);
         $.getJSON("config.json", function (data) {
-          const { app, search } = data;
-          search.sort((a, b) => a.index - b.index);
+          const { app, engine } = data;
+          engine.sort((a, b) => a.index - b.index);
           window[APP_CONFIG_KEY] = app;
-          window[SEARCH_CONFIG_KEY] = search;
-          const engine = getEngineDom();
-          const availableEngine =
-            $(".integrated-search").find("#availableEngine");
-          $.each(search, (i, o) => {
-            availableEngine.append(
+          window[ENGINE_CONFIG_KEY] = engine;
+
+          const engineEl = getEngineDom();
+          const engineDropdown = $("#search").find("#engineDropdown");
+          $.each(engine, (i, o) => {
+            engineDropdown.append(
               `<a class="dropdown-item ${o.key}" href="#" data-key="${o.key}" data-search="${o.search}" data-placeholder="${o.placeholder}">${o.title}</a>`
             );
           });
-          $.each(search, (i, o) => {
+          $.each(engine, (i, o) => {
             if (o.default) {
-              const item = engine.find(`.${o.key}`);
+              const item = engineEl.find(`.${o.key}`);
               handleEngineDropdownClick({ target: item[0] });
             }
           });
