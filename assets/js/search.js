@@ -61,6 +61,12 @@ function getProtocol(url) {
   return url.match(REG)?.[1] || "";
 }
 
+function getFavicon(url) {
+  const domain = getDomain(url);
+  const protocol = getProtocol(url);
+  return `${protocol}://${domain}/favicon.ico`;
+}
+
 function getEngineDom() {
   return $("#search").find("#searchEngine");
 }
@@ -225,7 +231,7 @@ function addBookmark({ url, title }) {
   addIcon.before(`
     <a class="item" href="${url}" target="_blank" data-title="${title}">
       <img
-        src="${getProtocol(url)}://${getDomain(url)}/favicon.ico"
+        src="${getFavicon(url)}"
         alt="${title[0]}"
         onerror="this.src='';this.onerror=null;"
         class="favicon"
@@ -237,18 +243,18 @@ function addBookmark({ url, title }) {
 
 function bookmarkSortable() {
   new Sortable($("#bookmark").get(0), {
-    draggable: '.edit > .item',
+    draggable: ".edit > .item",
     onDrop: ({ node, target, oldIndex, newIndex }) => {
       if (oldIndex === newIndex) return;
       const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
       const result = store ? JSON.parse(store) : [];
-      const fromIndex = result.findIndex(item => item.url === getBookmarkUrl(node));
-      const toIndex = result.findIndex(item => item.url === getBookmarkUrl(target));
-      const item = result[fromIndex];;
+      const fromIndex = result.findIndex((item) => item.url === getBookmarkUrl(node));
+      const toIndex = result.findIndex((item) => item.url === getBookmarkUrl(target));
+      const item = result[fromIndex];
       result.splice(fromIndex, 1);
       result.splice(toIndex, 0, item);
       localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
-    }
+    },
   });
 }
 

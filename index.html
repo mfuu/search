@@ -109,7 +109,7 @@
           const engineDropdown = $("#search").find("#engineDropdown");
           $.each(engine, (i, o) => {
             engineDropdown.append(
-              `<a class="dropdown-item ${o.key}" href="#" data-key="${o.key}" data-search="${o.search}" data-placeholder="${o.placeholder}">${o.title}</a>`
+              `<a class="dropdown-item ${o.key}" href="#${o.key}" data-key="${o.key}" data-search="${o.search}" data-placeholder="${o.placeholder}">${o.title}</a>`
             );
           });
           $.each(engine, (i, o) => {
@@ -118,6 +118,12 @@
               handleEngineDropdownClick({ target: item[0] });
             }
           });
+
+          const hash = window.location.hash.split("#")[1];
+          if (hash) {
+            const item = engineEl.find(`.${hash}`);
+            item.length && handleEngineDropdownClick({ target: item[0] });
+          }
         });
         visibleBookmarks();
         bookmarkSortable();
