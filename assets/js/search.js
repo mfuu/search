@@ -260,12 +260,64 @@ function bookmarkSortable() {
 $(function () {
   $(document).ready(function () {
     const inputDom = getInputDom();
+    const suggestDom = getSuggestDom();
     inputDom.focus();
 
     $(inputDom).on("keydown", function (event) {
-      const isInputing = $(inputDom).attr("inputing") === "true";
+      const isInputing = $(this).attr("inputing") === "true";
       if (!isInputing && event.keyCode == 13) {
-        onSearch();
+        const items = suggestDom.find("li");
+        const activeItem = items.filter(".active");
+        if (activeItem.length) {
+          activeItem.click();
+        } else {
+          onSearch();
+        }
+      }
+
+      // up and down to select suggest item
+      if (event.keyCode == 38 || event.keyCode == 40) {
+        event.preventDefault();
+        const items = suggestDom.find("li");
+        const activeItem = items.filter(".active");
+
+        if (activeItem.length) {
+          activeItem.removeClass("active");
+
+          if (event.keyCode == 38) {
+            if (activeItem.index() === 0) {
+              // ignore
+            } else {
+              activeItem.prev().addClass("active");
+            }
+          } else if (event.keyCode == 40) {
+            if (activeItem.index() === items.length - 1) {
+              // ignore
+            } else {
+              activeItem.next().addClass("active");
+            }
+          }
+        } else {
+          if (event.keyCode == 38) {
+            items.last().addClass("active");
+          } else {
+            items.first().addClass("active");
+          }
+        }
+
+        const currentActive = items.filter(".active");
+
+        // update input value
+        if (currentActive.length) {
+          $(this).val(currentActive.find(".inner-text").text());
+        }
+
+        // scroll active item into view
+        currentActive[0]?.scrollIntoView({
+          block: "nearest",
+          inline: "nearest",
+          behavior: "smooth",
+        });
       }
     });
     $(inputDom).on("compositionstart", function () {
@@ -273,6 +325,9 @@ $(function () {
     });
     $(inputDom).on("compositionend", function () {
       $(inputDom).attr("inputing", "false");
+    });
+    $(suggestDom).on("mouseover", function () {
+      $(this).find("li").filter(".active").removeClass("active");
     });
   });
   $(document).on("contextmenu", "#bookmark", function (e) {

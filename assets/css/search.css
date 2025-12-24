@@ -180,7 +180,8 @@ svg {
   cursor: pointer;
   animation: moveIn ease-in-out 0.5s;
 }
-.search-suggestions li:hover {
+.search-suggestions li:hover,
+.search-suggestions li.active {
   background-color: #20212419;
 }
 .search-suggestions .suggest-icon {
