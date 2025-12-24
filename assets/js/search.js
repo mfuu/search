@@ -237,8 +237,7 @@ function addBookmark({ url, title }) {
         class="favicon"
       />
       <span id="closeTagIcon" class="close-icon">x</span>
-    </a>`
-  );
+    </a>`);
 }
 
 function bookmarkSortable() {
@@ -262,11 +261,19 @@ $(function () {
   $(document).ready(function () {
     const inputDom = getInputDom();
     inputDom.focus();
-  });
-  $(document).keyup(function (event) {
-    if (event.keyCode == 13) {
-      onSearch();
-    }
+
+    $(inputDom).on("keydown", function (event) {
+      const isInputing = $(inputDom).attr("inputing") === "true";
+      if (!isInputing && event.keyCode == 13) {
+        onSearch();
+      }
+    });
+    $(inputDom).on("compositionstart", function () {
+      $(inputDom).attr("inputing", "true");
+    });
+    $(inputDom).on("compositionend", function () {
+      $(inputDom).attr("inputing", "false");
+    });
   });
   $(document).on("contextmenu", "#bookmark", function (e) {
     if ($(e.target).closest(".item").length) {

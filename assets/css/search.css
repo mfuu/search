@@ -167,7 +167,7 @@ svg {
 }
 .search-suggestions {
   padding-left: 0px;
-  border-radius: 0px 0px 24px 24px;
+  border-radius: 0px 0px 20px 20px;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: rgb(255, 255, 255);
