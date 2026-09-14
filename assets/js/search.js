@@ -1,396 +1,263 @@
-const CUSTOM_BOOKMARK_KEY = "customBookmarkLocalStoreKey";
-const ENGINE_CONFIG_KEY = "SearchEngineConfigs";
-const APP_CONFIG_KEY = "recommendedAppConfigs";
+const ENGINE_CONFIG_KEY = 'SearchEngineConfigs';
+const APP_CONFIG_KEY = 'recommendedAppConfigs';
+
+let $search, $searchEngine, $searchSuggest, $searchInput;
+
+$(function () {
+  $search = $('#search');
+  $searchEngine = $search.find('#searchEngine');
+  $searchInput = $search.find('#searchInput');
+  $searchSuggest = $search.find('#searchSuggest');
+});
+
+const toggleSearchSuggestVisible = (bool) => $search.toggleClass('suggest-visible', bool);
+
+function handleSuggestWords(suggests = [], dataKey = '') {
+  $searchSuggest.children(`li[data-key="${dataKey}"]`).remove();
+  const inputText = $searchInput.val();
+  if (inputText.trim()) {
+    suggests.forEach((item) => $searchSuggest.append(item));
+  }
+  if ($searchSuggest.children().length) {
+    toggleSearchSuggestVisible(true);
+  } else {
+    toggleSearchSuggestVisible(false);
+  }
+}
+
+function renderSuggestItem(item, key) {
+  return `<li data-key="${key}" title="${item}">
+    <svg width="18" height="18" class="text-secondary"><use href="./assets/icons.svg#icon-search"></use></svg>
+    <div class="inner-text">${item}</div>
+    <svg width="16" height="16"><use href="./assets/icons.svg#icon-${key}"></use></svg>
+  </li>`;
+}
 
 window.baidu = {
   sug(data) {
-    const list = data.s || [];
-    const suggests = list.map((item) => {
-      return `
-        <li data-key="baidu" title="${item}">
-          <i class="search-icon suggest-icon"></i>
-          <div class="inner-text">${item}</div>
-          <div class="logo baidu-logo">
-        </li>`;
-    });
-    handleSuggestWords(suggests, "baidu");
+    handleSuggestWords(
+      (data.s || []).map((item) => renderSuggestItem(item, 'baidu')),
+      'baidu'
+    );
   },
 };
+
 window.google = {
   ac: {
     h(data) {
-      const list = data[1];
-      const suggests = list.map((item) => {
-        return `
-          <li data-key="google" title="${item[0]}">
-            <i class="search-icon suggest-icon"></i>
-            <div class="inner-text">${item[0]}</div>
-            <div class="logo google-logo">
-          </li>`;
-      });
-      handleSuggestWords(suggests, "google");
+      handleSuggestWords(
+        (data[1] || []).map((item) => renderSuggestItem(item[0], 'google')),
+        'google'
+      );
     },
   },
 };
+
 window.bing = {
   sug(data) {
-    const { Results = [] } = data.AS;
-    const list = Results.reduce((res, item) => {
-      res.push(...item.Suggests.map((el) => el.Txt));
-      return res;
-    }, []);
-    const suggests = list.map((item) => {
-      return `
-        <li data-key="bing" title="${item}">
-          <i class="search-icon suggest-icon"></i>
-          <div class="inner-text">${item}</div>
-          <div class="logo bing-logo">
-        </li>`;
-    });
-    handleSuggestWords(suggests, "bing");
+    const list = (data.AS.Results || []).reduce(
+      (res, item) => res.concat(item.Suggests.map((el) => el.Txt)),
+      []
+    );
+    handleSuggestWords(
+      list.map((item) => renderSuggestItem(item, 'bing')),
+      'bing'
+    );
   },
 };
 
-function getDomain(url) {
-  const REG = /^https?:\/\/([^\/]+)/i;
-  return url.match(REG)?.[1] || "";
-}
+function handleSuggestItemClick(e) {
+  const currentEngine = $searchEngine.find('#currentEngine');
+  const engineKey = $(e.target).attr('data-key');
+  const searchUrl = $(e.target).attr('data-search');
+  const placeholder = $(e.target).attr('data-placeholder');
 
-function getProtocol(url) {
-  const REG = /^(https?)/i;
-  return url.match(REG)?.[1] || "";
-}
+  $searchInput.attr('data-search', searchUrl);
+  $searchInput.attr('placeholder', placeholder);
 
-function getFavicon(url) {
-  const domain = getDomain(url);
-  const protocol = getProtocol(url);
-  return `${protocol}://${domain}/favicon.ico`;
-}
+  currentEngine.attr('data-key', engineKey);
+  currentEngine.html(
+    `<svg width="20" height="20"><use href="./assets/icons.svg#icon-${engineKey}"></use></svg>`
+  );
 
-function getEngineDom() {
-  return $("#search").find("#searchEngine");
-}
-
-function getSuggestDom() {
-  return $("#search").find("#searchSuggest");
-}
-
-function getInputDom() {
-  return $("#search").find("#searchInput");
-}
-
-function toggleSearchClass(bool) {
-  $("#search")[bool ? "addClass" : "removeClass"]("sug-show");
-}
-
-function toggleBookmarkClass(bool) {
-  $("#bookmark")[bool ? "addClass" : "removeClass"]("edit");
-}
-
-function toogleContextmenuVisible(bool) {
-  $("contextmenu").css("display", bool ? "block" : "");
-}
-
-function toogleAddBookmarkVisible() {
-  const wrap = $("#bookmark");
-  if (wrap.children().length <= 1) {
-    wrap.children("#addBookmark").css("display", "block");
-  } else {
-    wrap.children("#addBookmark").css("display", "");
-  }
-}
-
-function handleSuggestWords(suggests = [], dataKey = "") {
-  const suggestDom = getSuggestDom();
-  suggestDom.children(`li[data-key="${dataKey}"]`).remove();
-  const inputText = getInputDom().val();
-  if (inputText.trim()) {
-    suggests.forEach((item) => suggestDom.append(item));
-  }
-  if (suggestDom.children().length) {
-    toggleSearchClass(true);
-  } else {
-    toggleSearchClass(false);
-  }
-}
-
-function handleEngineDropdownClick(e) {
-  const inputDom = getInputDom();
-  const currentEngine = getEngineDom().find("#currentEngine");
-  const engineKey = $(e.target).attr("data-key");
-  const searchUrl = $(e.target).attr("data-search");
-  const placeholder = $(e.target).attr("data-placeholder");
-  inputDom.attr("data-search", searchUrl);
-  inputDom.attr("placeholder", placeholder);
-  currentEngine.attr("data-key", engineKey);
-  currentEngine.removeClass(function (i, cls) {
-    const classToRemove = [];
-    cls.split(/\s+/).forEach((item) => {
-      if (item.match(/^.*-logo$/)) {
-        classToRemove.push(item);
-      }
-    });
-    return classToRemove.join(" ");
-  });
-  currentEngine.addClass(`${engineKey}-logo`);
-
-  const engineDropdown = getEngineDom().find("#engineDropdown");
+  const engineDropdown = $searchEngine.find('#engineDropdown');
   engineDropdown.children().each(function (i, o) {
-    $(this).removeClass("active");
-    if ($(this).attr("data-key") === engineKey) {
-      $(this).addClass("active");
+    $(this).removeClass('active');
+    if ($(this).attr('data-key') === engineKey) {
+      $(this).addClass('active');
     }
   });
 }
 
-function onInputChange() {
-  var keywords = $(this).val();
-  if (!keywords.trim()) {
-    toggleSearchClass(false);
-    getSuggestDom().empty();
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+window.onInputChange = debounce(function () {
+  const keywords = $(this).val().trim();
+  if (!keywords) {
+    toggleSearchSuggestVisible(false);
+    $searchSuggest.empty();
     return;
   }
   $.each(window[ENGINE_CONFIG_KEY], (i, o) => {
     $.ajax({
-      url: o.suggest.replace("#content#", keywords),
-      dataType: "jsonp",
+      url: o.suggest.replace('#content#', encodeURIComponent(keywords)),
+      dataType: 'jsonp',
       jsonp: o.jsonp,
       jsonpCallback: o.callback,
       error: function (e) {
-        if (e.status !== 200) {
-          handleSuggestWords([], o.key);
-        }
+        if (e.status !== 200) handleSuggestWords([], o.key);
       },
     });
   });
-}
+}, 200);
 
-function onSearch(search = "") {
-  let inputDom = getInputDom();
-  if (!inputDom) {
-    console.error("The Input box with id `searchInput` is not found.");
+function onSearch(search = '') {
+  if (!$searchInput) {
+    console.error('The Input box with id `searchInput` is not found.');
     return;
   }
-  let word = inputDom.val();
+  let word = $searchInput.val();
   if (!word.trim()) {
     return;
   }
-  let link = (search || inputDom.attr("data-search")) + word;
+  let link = (search || $searchInput.attr('data-search')) + word;
   location.href = link;
 }
 
-function handleAddBookmark() {
-  const title = $("#bookmarkModal").find("#webSiteTitle").val();
-  const url = $("#bookmarkModal").find("#webSiteUrl").val();
-  const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
-  const result = store ? JSON.parse(store) : [];
-  const index = result.findIndex((item) => item.url == url);
-  if (index > -1) {
-    result[index] = { title, url };
-  } else {
-    result.push({ title, url });
-    addBookmark({ url, title });
-  }
-  localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
-  $("#bookmarkModal").modal("hide");
-  toogleAddBookmarkVisible();
-}
+function initSearch() {
+  const input = $search.find('#searchInput');
+  input.bind('input propertychange', window.onInputChange);
+  $.getJSON('config.json', function (data) {
+    const { app, engine } = data;
+    engine.sort((a, b) => a.index - b.index);
+    window[APP_CONFIG_KEY] = app;
+    window[ENGINE_CONFIG_KEY] = engine;
 
-function handleRemoveBookmark(e) {
-  const item = e.target.parentNode;
-  const url = getBookmarkUrl(item);
-  const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
-  const result = store ? JSON.parse(store) : [];
-  const index = result.findIndex((item) => item.url === url);
-  if (index > -1) {
-    result.splice(index, 1);
-  }
-  localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
-  item.remove();
-  toogleAddBookmarkVisible();
-}
-
-function getBookmarkUrl(item) {
-  return $(item).attr("href");
-}
-
-function visibleBookmarks() {
-  const wrap = $("#bookmark");
-  const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
-  wrap.children(".item").remove();
-  if (store) {
-    $.each(JSON.parse(store), (i, o) => {
-      addBookmark(o);
+    const engineDropdown = $search.find('#engineDropdown');
+    $.each(engine, (i, o) => {
+      engineDropdown.append(
+        `<a class="dropdown-item ${o.key}" href="#${o.key}" data-key="${o.key}" data-search="${o.search}" data-placeholder="${o.placeholder}">${o.title}</a>`
+      );
     });
-  }
-  toogleAddBookmarkVisible();
-}
+    $.each(engine, (i, o) => {
+      if (o.default) {
+        const item = $searchEngine.find(`.${o.key}`);
+        handleSuggestItemClick({ target: item[0] });
+      }
+    });
 
-function addBookmark({ url, title }) {
-  const addIcon = $("#bookmark").children("#addBookmark");
-  addIcon.before(`
-    <a class="item" href="${url}" target="_blank" data-title="${title}">
-      <img
-        src="${getFavicon(url)}"
-        alt="${title[0]}"
-        onerror="this.src='';this.onerror=null;"
-        class="favicon"
-      />
-      <span id="closeTagIcon" class="close-icon">x</span>
-    </a>`);
-}
-
-function bookmarkSortable() {
-  new Sortable($("#bookmark").get(0), {
-    draggable: ".edit > .item",
-    onDrop: ({ node, target, oldIndex, newIndex }) => {
-      if (oldIndex === newIndex) return;
-      const store = localStorage.getItem(CUSTOM_BOOKMARK_KEY);
-      const result = store ? JSON.parse(store) : [];
-      const fromIndex = result.findIndex((item) => item.url === getBookmarkUrl(node));
-      const toIndex = result.findIndex((item) => item.url === getBookmarkUrl(target));
-      const item = result[fromIndex];
-      result.splice(fromIndex, 1);
-      result.splice(toIndex, 0, item);
-      localStorage.setItem(CUSTOM_BOOKMARK_KEY, JSON.stringify(result));
-    },
+    const hash = window.location.hash.split('#')[1];
+    if (hash) {
+      const item = $searchEngine.find(`.${hash}`);
+      item.length && handleSuggestItemClick({ target: item[0] });
+    }
   });
 }
 
 $(function () {
-  $(document).ready(function () {
-    const inputDom = getInputDom();
-    const suggestDom = getSuggestDom();
-    inputDom.focus();
+  initSearch();
 
-    $(inputDom).on("keydown", function (event) {
-      const isInputing = $(this).attr("inputing") === "true";
-      if (!isInputing && event.keyCode == 13) {
-        const items = suggestDom.find("li");
-        const activeItem = items.filter(".active");
-        if (activeItem.length) {
-          activeItem.click();
-        } else {
-          onSearch();
-        }
+  $searchInput.focus();
+
+  $($searchInput).on('keydown', function (event) {
+    const isInputing = $(this).attr('inputing') === 'true';
+    if (!isInputing && event.keyCode == 13) {
+      const items = $searchSuggest.find('li');
+      const activeItem = items.filter('.active');
+      if (activeItem.length) {
+        activeItem.click();
+      } else {
+        onSearch();
       }
+    }
 
-      // up and down to select suggest item
-      if (event.keyCode == 38 || event.keyCode == 40) {
-        event.preventDefault();
-        const items = suggestDom.find("li");
-        const activeItem = items.filter(".active");
+    // up and down to select suggest item
+    if (event.keyCode == 38 || event.keyCode == 40) {
+      event.preventDefault();
+      const items = $searchSuggest.find('li');
+      const activeItem = items.filter('.active');
 
-        if (activeItem.length) {
-          activeItem.removeClass("active");
+      if (activeItem.length) {
+        activeItem.removeClass('active');
 
-          if (event.keyCode == 38) {
-            if (activeItem.index() === 0) {
-              // ignore
-            } else {
-              activeItem.prev().addClass("active");
-            }
-          } else if (event.keyCode == 40) {
-            if (activeItem.index() === items.length - 1) {
-              // ignore
-            } else {
-              activeItem.next().addClass("active");
-            }
-          }
-        } else {
-          if (event.keyCode == 38) {
-            items.last().addClass("active");
+        if (event.keyCode == 38) {
+          if (activeItem.index() === 0) {
+            // ignore
           } else {
-            items.first().addClass("active");
+            activeItem.prev().addClass('active');
+          }
+        } else if (event.keyCode == 40) {
+          if (activeItem.index() === items.length - 1) {
+            // ignore
+          } else {
+            activeItem.next().addClass('active');
           }
         }
-
-        const currentActive = items.filter(".active");
-
-        // update input value
-        if (currentActive.length) {
-          $(this).val(currentActive.find(".inner-text").text());
+      } else {
+        if (event.keyCode == 38) {
+          items.last().addClass('active');
+        } else {
+          items.first().addClass('active');
         }
+      }
 
-        // scroll active item into view
-        currentActive[0]?.scrollIntoView({
-          block: "nearest",
-          inline: "nearest",
-          behavior: "smooth",
-        });
+      const currentActive = items.filter('.active');
+
+      // update input value
+      if (currentActive.length) {
+        $(this).val(currentActive.find('.inner-text').text());
       }
-    });
-    $(inputDom).on("compositionstart", function () {
-      $(inputDom).attr("inputing", "true");
-    });
-    $(inputDom).on("compositionend", function () {
-      $(inputDom).attr("inputing", "false");
-    });
-    $(suggestDom).on("mouseover", function () {
-      $(this).find("li").filter(".active").removeClass("active");
-    });
-  });
-  $(document).on("contextmenu", "#bookmark", function (e) {
-    if ($(e.target).closest(".item").length) {
-      return;
-    } else {
-      e.preventDefault();
-      let pageX = e.pageX + 6;
-      let pageY = e.pageY;
-      const { clientWidth } = document.documentElement;
-      const menuWidth = $("contextmenu").width();
-      if (clientWidth - pageX < menuWidth + 1) {
-        pageX -= menuWidth;
-      }
-      $("contextmenu").css("left", pageX);
-      $("contextmenu").css("top", pageY);
-      toogleContextmenuVisible(true);
+
+      // scroll active item into view
+      currentActive[0]?.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest',
+        behavior: 'smooth',
+      });
     }
   });
-  $(document).on("click", function (e) {
-    if ($(e.target).parents("#searchSuggest").length) {
-      const li = $(e.target).closest("li");
-      const txt = li.find(".inner-text").text();
-      const key = li.attr("data-key");
-      const inputDom = getInputDom();
-      inputDom.val(txt);
-      let search = "";
+
+  $($searchInput).on('compositionstart', function () {
+    $($searchInput).attr('inputing', 'true');
+  });
+
+  $($searchInput).on('compositionend', function () {
+    $($searchInput).attr('inputing', 'false');
+  });
+
+  $($searchSuggest).on('mouseover', function () {
+    $(this).find('li').filter('.active').removeClass('active');
+  });
+
+  $(document).on('click', function (e) {
+    if ($(e.target).parents('#searchSuggest').length) {
+      const li = $(e.target).closest('li');
+      const txt = li.find('.inner-text').text();
+      const key = li.attr('data-key');
+      $searchInput.val(txt);
+      let search = '';
       $.each(window[ENGINE_CONFIG_KEY], (i, o) => {
         if (o.key === key) {
           search = o.search;
         }
       });
       onSearch(search);
-    } else if ($(e.target).closest("#searchInput").length) {
-      let suggest = getSuggestDom();
-      if (suggest.children().length) {
-        toggleSearchClass(true);
+    } else if ($(e.target).closest('#searchInput').length) {
+      if ($searchSuggest.children().length) {
+        toggleSearchSuggestVisible(true);
       }
-    } else if ($(e.target).closest("#searchIcon").length) {
+    } else if ($(e.target).closest('#searchIcon').length) {
       onSearch();
-    } else if ($(e.target).parents("#engineDropdown").length) {
-      handleEngineDropdownClick(e);
-    } else if ($(e.target).attr("id") === "closeTagIcon") {
-      e.preventDefault();
-      handleRemoveBookmark(e);
-    } else if ($(e.target).closest(".modal").length) {
-      return;
-    } else if ($(e.target).closest("contextmenu").length) {
-      toogleContextmenuVisible(false);
-      return;
-    } else if ($(e.target).closest("#bookmark").length) {
-      toogleContextmenuVisible(false);
-      return;
+    } else if ($(e.target).parents('#engineDropdown').length) {
+      handleSuggestItemClick(e);
     } else {
-      toggleSearchClass(false);
-      toggleBookmarkClass(false);
-    }
-    toogleContextmenuVisible(false);
-  });
-  $(document).on("touchend", function (e) {
-    if ($(e.target).attr("id") === "closeTagIcon") {
-      e.preventDefault();
-      handleRemoveBookmark(e);
+      toggleSearchSuggestVisible(false);
     }
   });
 });
